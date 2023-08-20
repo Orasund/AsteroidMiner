@@ -5,12 +5,12 @@ import Building exposing (BuildingType(..), Volume(..))
 import Color
 import Data exposing (size, spriteSize)
 import Data.Game as Game
-import Data.Map as Map exposing (Map)
+import Data.Map
 import Grid.Bordered as Grid
 import Html exposing (Html)
 import Html.Attributes
 import Layout
-import Lib.Map exposing (SquareType(..))
+import Lib.Map exposing (Map, SquareType(..))
 import PixelEngine exposing (Area)
 import PixelEngine.Image as Image
 import PixelEngine.Options exposing (Options)
@@ -58,7 +58,7 @@ tutorial num map =
             , ( ( 20, 16 ), Mine |> Game.newBuilding True Data.mineVolume )
 
             --
-            , ( ( 20, 14 ), Mine |> Game.newBuilding (True) Data.mineVolume )
+            , ( ( 20, 14 ), Mine |> Game.newBuilding True Data.mineVolume )
             , ( ( 21, 14 ), Pipe |> Game.newBuilding False 0 )
             , ( ( 22, 14 ), Container Empty |> Game.newBuilding False 0 )
             ]
@@ -153,7 +153,7 @@ init num seed =
     let
         content =
             RunningGame.init
-                { map = Map.init |> tutorial num
+                { map = Data.Map.init |> tutorial num
                 , seed = seed
                 , winCondition =
                     case num of

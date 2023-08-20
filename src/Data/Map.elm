@@ -1,32 +1,14 @@
-module Data.Map exposing (GroundType(..), Map, Neighborhood, Square, SquareType, init, update)
+module Data.Map exposing (Neighborhood, init, update)
 
-import Building exposing (BuildingType(..), Volume(..))
+import Building exposing (BuildingType(..), GroundType(..), Volume(..))
 import Data exposing (size)
 import Grid.Bordered as Grid
-import Lib.Map as Map exposing (SingleCommand, SquareType(..))
+import Lib.Map as Map exposing (Map, SingleCommand, SquareType(..))
 import Lib.Neighborhood as Neighborhood
-
-
-type GroundType
-    = Dirt
-    | Mountain { big : Bool }
-    | OreGround
 
 
 type alias Neighborhood =
     Neighborhood.Neighborhood ( Maybe BuildingType, Bool )
-
-
-type alias SquareType =
-    Map.SquareType BuildingType GroundType
-
-
-type alias Square =
-    Map.Square BuildingType GroundType
-
-
-type alias Map =
-    Map.Map BuildingType GroundType
 
 
 init : Map

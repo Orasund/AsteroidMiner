@@ -1,6 +1,6 @@
 module Lib.Map exposing (Map, SingleCommand(..), Square, SquareType(..), apply)
 
-import Building exposing (Building, BuildingType)
+import Building exposing (Building, BuildingType, GroundType)
 import Data exposing (maxValue)
 import Direction exposing (Direction)
 import Grid.Bordered as Grid exposing (Error(..), Grid)
@@ -15,20 +15,20 @@ type SingleCommand
     | Destroy
 
 
-type SquareType a b
-    = GroundSquare b
-    | BuildingSquare (Building a)
+type SquareType
+    = GroundSquare GroundType
+    | BuildingSquare Building
 
 
-type alias Square a b =
-    ( SquareType a b, Bool )
+type alias Square =
+    ( SquareType, Bool )
 
 
-type alias Map a b =
-    Grid (Square a b)
+type alias Map =
+    Grid Square
 
 
-store : ( Int, Int ) -> Building BuildingType -> Map BuildingType b -> Result Error (Map BuildingType b)
+store : ( Int, Int ) -> Building -> Map -> Result Error Map
 store pos ({ value } as building) m =
     let
         maybeItem : Bool
@@ -60,23 +60,23 @@ store pos ({ value } as building) m =
 
 send :
     ( Int, Int )
-    -> Building a
+    -> Building
     -> Bool
     ->
-        { empty : b
-        , lookUp : Map a b
-        , canStore : ( Int, Int ) -> a -> { value : Int } -> Bool
+        { empty : GroundType
+        , lookUp : Map
+        , canStore : ( Int, Int ) -> BuildingType -> { value : Int } -> Bool
         }
     -> Direction
-    -> Map a b
-    -> Result Error (Map a b)
+    -> Map
+    -> Result Error Map
 send pos ({ value } as building) maybeItem { lookUp, canStore } direction m =
     let
         neighborPos : ( Int, Int )
         neighborPos =
             direction |> Direction.toCoord |> Position.addTo pos
 
-        updateNeighbor : Bool -> Map a b -> Result Error (Map a b)
+        updateNeighbor : Bool -> Map -> Result Error Map
         updateNeighbor maybeC =
             Grid.update neighborPos
                 (\maybeSquare ->
@@ -90,7 +90,7 @@ send pos ({ value } as building) maybeItem { lookUp, canStore } direction m =
                             Err ()
                 )
 
-        solveConflict : Map a b -> Result Error (Map a b)
+        solveConflict : Map -> Result Error Map
         solveConflict =
             Grid.update neighborPos
                 (\maybeSquare ->
@@ -152,17 +152,17 @@ send pos ({ value } as building) maybeItem { lookUp, canStore } direction m =
 apply :
     List SingleCommand
     -> ( Int, Int )
-    -> Square BuildingType b
+    -> Square
     ->
-        { empty : b
-        , lookUp : Map BuildingType b
+        { empty : GroundType
+        , lookUp : Map
         , canStore : ( Int, Int ) -> BuildingType -> { value : Int } -> Bool
         }
-    -> Map BuildingType b
-    -> Map BuildingType b
+    -> Map
+    -> Map
 apply command pos ( squareType, maybeItem ) ({ empty } as config) map =
     let
-        transition : Building BuildingType -> BuildingType -> Map BuildingType b -> Result Error (Map BuildingType b)
+        transition : Building -> BuildingType -> Map -> Result Error Map
         transition building sort =
             Grid.update pos <|
                 \maybeSquare ->
@@ -177,7 +177,7 @@ apply command pos ( squareType, maybeItem ) ({ empty } as config) map =
                         _ ->
                             Err ()
 
-        create : Building BuildingType -> Map BuildingType b -> Result Error (Map BuildingType b)
+        create : Building -> Map -> Result Error Map
         create building =
             Grid.update pos <|
                 always <|
@@ -187,7 +187,7 @@ apply command pos ( squareType, maybeItem ) ({ empty } as config) map =
                             , True
                             )
 
-        destroy : Building BuildingType -> Map BuildingType b -> Result Error (Map BuildingType b)
+        destroy : Building -> Map -> Result Error Map
         destroy _ =
             Grid.update pos <|
                 \maybeSquare ->

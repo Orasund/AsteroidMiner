@@ -1,12 +1,17 @@
-module Building exposing (Building, BuildingType(..), Volume(..), canBreak, isInput, isOutput)
+module Building exposing (Building, BuildingType(..), GroundType(..), Volume(..), canBreak, isInput, isOutput)
 
 import Data.ToolSelection exposing (ToolSelection(..))
 
 
-type alias Building a =
+type alias Building =
     { value : Int
-    , sort : a
+    , sort : BuildingType
     }
+
+
+type GroundType
+    = Dirt
+    | Mountain { big : Bool }
 
 
 type Volume

@@ -1,6 +1,6 @@
 module Data.Game exposing (Game, emptySquare, getBuildingType, getGroundType, isBuildingType, isGroundType, isValid, newBuilding, solveConflict, updateBuilding)
 
-import Building exposing (BuildingType(..), Volume(..))
+import Building exposing (BuildingType(..), GroundType(..), Volume(..))
 import Building.Container as Container
 import Building.Merger as Merger
 import Building.Mine as Mine
@@ -8,9 +8,9 @@ import Building.Pipe as Pipe
 import Building.Sorter as Sorter
 import Data
 import Data.Comet exposing (Comet)
-import Data.Map exposing (GroundType(..), Map, Neighborhood, Square)
+import Data.Map exposing (Neighborhood)
 import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
-import Lib.Map exposing (SingleCommand, SquareType(..))
+import Lib.Map exposing (Map, SingleCommand, Square, SquareType(..))
 import Lib.Neighborhood as Neighborhood
 
 

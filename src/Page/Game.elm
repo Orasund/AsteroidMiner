@@ -3,7 +3,7 @@ module Page.Game exposing (Model, Msg, init, subscriptions, update, view)
 import Action exposing (Action)
 import Color
 import Data exposing (size, spriteSize, winAt)
-import Data.Map as Map exposing (GroundType(..))
+import Data.Map
 import Html exposing (Html)
 import Html.Attributes
 import Layout
@@ -27,7 +27,7 @@ type alias GameAction =
 
 init : Seed -> ( Model, Cmd msg )
 init seed =
-    ( RunningGame.init { map = Map.init, seed = seed, winCondition = winAt }, Cmd.none )
+    ( RunningGame.init { map = Data.Map.init, seed = seed, winCondition = winAt }, Cmd.none )
 
 
 type Msg

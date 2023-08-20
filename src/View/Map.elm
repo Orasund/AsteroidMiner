@@ -1,16 +1,15 @@
 module View.Map exposing (view, viewSquareType)
 
-import Building exposing (BuildingType(..))
+import Building exposing (BuildingType(..), GroundType(..))
 import Data.Game as Game
-import Data.Map as Map exposing (GroundType(..), Map, Square)
 import Data.ToolSelection exposing (ToolSelection(..))
 import Grid.Bordered as Grid
-import Lib.Map exposing (SquareType(..))
+import Lib.Map exposing (Map, Square, SquareType(..))
 import PixelEngine.Tile as Tile exposing (Tile)
 import View.Tileset as Tileset
 
 
-viewSquareType : Map.SquareType -> Tile msg
+viewSquareType : SquareType -> Tile msg
 viewSquareType squareType =
     case squareType of
         GroundSquare groundType ->
@@ -24,9 +23,6 @@ viewSquareType squareType =
 
                     else
                         Tileset.mountain
-
-                OreGround ->
-                    Tileset.oreGround
 
         BuildingSquare buildingType ->
             case buildingType.sort of

@@ -1,14 +1,14 @@
 module View.RunningGame exposing (Model, Msg(..), Status(..), areas, gameArea, guiArea, init, subscriptions, update)
 
-import Building exposing (BuildingType(..), Volume(..))
+import Building exposing (BuildingType(..), GroundType(..), Volume(..))
 import Color
 import Data exposing (floorCosts, fps, size, spriteSize)
 import Data.Comet as Comet exposing (Comet)
 import Data.Game as Game exposing (Game)
-import Data.Map as Map exposing (GroundType(..), Map, Square)
+import Data.Map
 import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
 import Grid.Bordered as Grid exposing (Error(..))
-import Lib.Map exposing (SquareType(..))
+import Lib.Map exposing (Map, Square, SquareType(..))
 import Lib.Neighborhood as Neighborhood
 import Location exposing (Angle(..))
 import PixelEngine exposing (Area)
@@ -96,7 +96,7 @@ timePassed ({ game, seed, winCondition } as model) =
 
         ( newMap, inventory ) =
             map
-                |> Map.update
+                |> Data.Map.update
                     { empty = Dirt
                     , update =
                         \pos ->
