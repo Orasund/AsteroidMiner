@@ -11,8 +11,8 @@ canStore _ _ =
 
 
 update : { value : Int, item : Bool } -> Neighborhood -> List SingleCommand
-update { value } neigh =
-    if value == 0 then
+update { value, item } neigh =
+    if value == 0 && not item then
         [ Destroy ]
 
     else

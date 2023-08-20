@@ -13,7 +13,7 @@ type alias Neighborhood =
 
 
 type SingleCommand
-    = Store
+    = Save
     | Send Direction
     | Create
     | Transition BuildingType
@@ -146,15 +146,15 @@ send pos ({ value } as building) maybeItem { lookUp, canStore } direction m =
         neighborPos =
             direction |> Direction.toCoord |> Position.addTo pos
 
-        updateNeighbor : Bool -> Map -> Result Error Map
-        updateNeighbor maybeC =
+        updateNeighbor : Map -> Result Error Map
+        updateNeighbor =
             Grid.update neighborPos
                 (\maybeSquare ->
                     case maybeSquare of
                         Just ( BuildingSquare b, False ) ->
                             Ok <|
                                 Just <|
-                                    ( BuildingSquare b, maybeC )
+                                    ( BuildingSquare b, True )
 
                         _ ->
                             Err ()
@@ -186,7 +186,7 @@ send pos ({ value } as building) maybeItem { lookUp, canStore } direction m =
                     m
                         |> (case maybeEntry of
                                 Just ( BuildingSquare _, False ) ->
-                                    updateNeighbor maybeItem
+                                    updateNeighbor
 
                                 Just ( BuildingSquare _, True ) ->
                                     solveConflict
@@ -196,24 +196,17 @@ send pos ({ value } as building) maybeItem { lookUp, canStore } direction m =
                            )
                 )
             |> Result.andThen
-                (Grid.update pos <|
-                    always <|
-                        let
-                            _ =
-                                ( building.sort, maybeItem )
-                        in
-                        if value > 1 then
-                            Ok <|
-                                Just <|
-                                    ( BuildingSquare { building | value = value - 1 }
-                                    , maybeItem
-                                    )
-
-                        else
-                            Ok <|
-                                Just <|
-                                    ( BuildingSquare { building | value = 0 }, False )
+                (Grid.update pos
+                    (\_ ->
+                        ( BuildingSquare building, False )
+                            |> Just
+                            |> Ok
+                    )
                 )
+
+    else if value > 0 then
+        m
+            |> Grid.update pos (\_ -> ( BuildingSquare { building | value = building.value - 1 }, True ) |> Just |> Ok)
 
     else
         Err NotSuccessful
@@ -282,7 +275,7 @@ apply command pos ( squareType, maybeItem ) ({ empty } as config) map =
                     (\c ->
                         map
                             |> (case c of
-                                    Store ->
+                                    Save ->
                                         store pos building
 
                                     Send direction ->
