@@ -17,7 +17,6 @@ update { value, item } neigh =
 
     else
         neigh
-            |> Neighborhood.toList
             |> List.filterMap
                 (\( dir, ( a, _ ) ) ->
                     case a of

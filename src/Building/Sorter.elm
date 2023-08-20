@@ -13,7 +13,6 @@ canStore _ _ =
 update : Neighborhood -> List SingleCommand
 update neigh =
     neigh
-        |> Neighborhood.toList
         |> List.filterMap
             (\( dir, ( a, _ ) ) ->
                 case a of

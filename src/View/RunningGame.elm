@@ -68,7 +68,6 @@ init { winCondition, map, seed } =
         game =
             { comet = comet
             , map = map
-            , bag = False
             , debts = 0
             }
     in
@@ -105,10 +104,12 @@ timePassed ({ game, seed, winCondition } as model) =
                                         sort
                                         { value = value, item = maybeItem }
                                         (neigh
-                                            |> Neighborhood.map
-                                                (\maybe ->
-                                                    ( maybe |> Maybe.andThen Game.getBuildingType
-                                                    , maybe |> Maybe.map Tuple.second |> Maybe.withDefault False
+                                            |> List.map
+                                                (Tuple.mapSecond
+                                                    (\maybe ->
+                                                        ( maybe |> Maybe.andThen Game.getBuildingType
+                                                        , maybe |> Maybe.map Tuple.second |> Maybe.withDefault False
+                                                        )
                                                     )
                                                 )
                                         )
@@ -123,10 +124,12 @@ timePassed ({ game, seed, winCondition } as model) =
                                         Game.solveConflict
                                             sort
                                             (neigh
-                                                |> Neighborhood.map
-                                                    (\maybe ->
-                                                        ( maybe |> Maybe.andThen Game.getBuildingType
-                                                        , maybe |> Maybe.map Tuple.second |> Maybe.withDefault False
+                                                |> List.map
+                                                    (Tuple.mapSecond
+                                                        (\maybe ->
+                                                            ( maybe |> Maybe.andThen Game.getBuildingType
+                                                            , maybe |> Maybe.map Tuple.second |> Maybe.withDefault False
+                                                            )
                                                         )
                                                     )
                                             )
@@ -230,74 +233,6 @@ placeSquare building position ({ game } as model) =
             defaultCase
 
 
-pickUpSquare : ( Int, Int ) -> Model -> Model
-pickUpSquare position ({ gui, game } as model) =
-    let
-        newModel : Model
-        newModel =
-            case
-                game.map
-                    |> Grid.get position
-            of
-                Ok (Just ( square, True )) ->
-                    { model
-                        | game =
-                            { game
-                                | bag = True
-                                , map =
-                                    game.map
-                                        |> Grid.ignoringErrors
-                                            (Grid.update position
-                                                (always <|
-                                                    Ok <|
-                                                        Just <|
-                                                            ( square, False )
-                                                )
-                                            )
-                            }
-                        , gui = gui |> GUI.select (Bag True)
-                    }
-
-                _ ->
-                    model
-    in
-    newModel
-
-
-insertItem : ( Int, Int ) -> Model -> Model
-insertItem position ({ gui, game } as model) =
-    let
-        newModel : Model
-        newModel =
-            case
-                game.map
-                    |> Grid.get position
-            of
-                Ok (Just ( BuildingSquare b, True )) ->
-                    { model
-                        | game =
-                            { game
-                                | bag = False
-                                , map =
-                                    game.map
-                                        |> Grid.ignoringErrors
-                                            (Grid.update position
-                                                (always <|
-                                                    Ok <|
-                                                        Just <|
-                                                            ( BuildingSquare { b | value = b.value + 1 }, True )
-                                                )
-                                            )
-                            }
-                        , gui = gui |> GUI.select (Bag False)
-                    }
-
-                _ ->
-                    model
-    in
-    newModel
-
-
 squareClicked : ( Int, Int ) -> Model -> Model
 squareClicked position ({ gui, game } as model) =
     let
@@ -320,32 +255,29 @@ squareClicked position ({ gui, game } as model) =
             }
     in
     case gui.selected of
-        ToolSelection.Delete ->
+        Just ToolSelection.Delete ->
             deleteSqaure position model
 
-        ToolSelection.Bag False ->
-            pickUpSquare position model
-
-        ToolSelection.Bag True ->
-            insertItem position model
-
-        ToolSelection.Mine ->
+        Just ToolSelection.Mine ->
             Building.Mine |> build
 
-        ToolSelection.Pipe ->
+        Just ToolSelection.Pipe ->
             Building.Pipe |> build
 
-        ToolSelection.Container ->
+        Just ToolSelection.Container ->
             Building.Container Empty |> build
 
-        ToolSelection.Merger ->
+        Just ToolSelection.Merger ->
             Building.Merger |> build
 
-        ToolSelection.Sorter ->
+        Just ToolSelection.Sorter ->
             Building.Sorter |> build
 
-        ToolSelection.Floor ->
+        Just ToolSelection.Floor ->
             placeFloor
+
+        Nothing ->
+            model
 
 
 update : Msg -> Model -> Model
@@ -421,7 +353,7 @@ guiArea model =
             PixelEngine.colorBackground <|
                 Color.rgb255 20 12 28
         }
-        (GUI.view model.game.bag model.inventory model.gui)
+        (GUI.view model.inventory model.gui)
         |> PixelEngine.mapArea GuiSpecific
 
 

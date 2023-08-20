@@ -11,23 +11,23 @@ import View.Tileset.Big as Tileset
 
 
 type alias Model =
-    { selected : ToolSelection
+    { selected : Maybe ToolSelection
     }
 
 
 type Msg
-    = ItemSelected ToolSelection
+    = Select (Maybe ToolSelection)
 
 
 init : Model
 init =
-    { selected = Bag False
+    { selected = Nothing
     }
 
 
 select : ToolSelection -> Model -> Model
 select tool model =
-    { model | selected = tool }
+    { model | selected = Just tool }
 
 
 toDefault : Model -> Model
@@ -38,7 +38,7 @@ toDefault =
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        ItemSelected blueprint ->
+        Select blueprint ->
             { model | selected = blueprint }
 
 
@@ -68,7 +68,7 @@ viewList list =
             )
 
 
-viewBlueprint : ToolSelection -> ToolSelection -> Image Msg
+viewBlueprint : Maybe ToolSelection -> ToolSelection -> Image Msg
 viewBlueprint selected blueprint =
     let
         { image, symobl } =
@@ -85,12 +85,6 @@ viewBlueprint selected blueprint =
                 ToolSelection.Delete ->
                     Tileset.delete
 
-                ToolSelection.Bag True ->
-                    Tileset.pickUp (Just View.Tileset.stone)
-
-                ToolSelection.Bag False ->
-                    Tileset.pickUp Nothing
-
                 ToolSelection.Merger ->
                     Tileset.merger
 
@@ -100,52 +94,52 @@ viewBlueprint selected blueprint =
                 ToolSelection.Floor ->
                     Tileset.floor
     in
-    if blueprint == selected then
+    if Just blueprint == selected then
         image
+            |> Image.clickable (Select Nothing)
 
     else
         symobl
-            |> Image.clickable (ItemSelected blueprint)
+            |> Image.clickable (Select (Just blueprint))
 
 
-viewDesc : ToolSelection -> List ( Location, Image Msg )
+viewDesc : Maybe ToolSelection -> List ( Location, Image Msg )
 viewDesc selected =
     let
         text : String
         text =
             case selected of
-                ToolSelection.Mine ->
+                Just ToolSelection.Mine ->
                     "Mine - Mines " ++ String.fromInt mineVolume ++ " items"
 
-                ToolSelection.Pipe ->
+                Just ToolSelection.Pipe ->
                     "Pipe - Transports items"
 
-                ToolSelection.Container ->
+                Just ToolSelection.Container ->
                     "Container - Stores " ++ String.fromInt maxValue ++ " items"
 
-                ToolSelection.Delete ->
+                Just ToolSelection.Delete ->
                     "DELETE BUILDINGS"
 
-                ToolSelection.Bag _ ->
-                    "PICK UP ITEMS"
-
-                ToolSelection.Merger ->
+                Just ToolSelection.Merger ->
                     "Merger - Takes from containers"
 
-                ToolSelection.Sorter ->
+                Just ToolSelection.Sorter ->
                     "Sorter - Sorts into containers"
 
-                ToolSelection.Floor ->
+                Just ToolSelection.Floor ->
                     "Floor - Costs " ++ String.fromInt floorCosts ++ " items"
+
+                Nothing ->
+                    ""
     in
     [ ( ( 0, (toFloat <| 2) * spriteSize ), Image.fromText text font ) ]
 
 
-view : Bool -> Int -> Model -> List ( Location, Image Msg )
-view bag inventory { selected } =
+view : Int -> Model -> List ( Location, Image Msg )
+view inventory { selected } =
     List.concat
-        [ [ Bag bag
-          , Mine
+        [ [ Mine
           , Pipe
           , Container
           , Merger

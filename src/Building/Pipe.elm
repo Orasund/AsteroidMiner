@@ -21,7 +21,6 @@ update neigh =
 
         filterMap pred =
             neigh
-                |> Neighborhood.toList
                 |> List.filterMap
                     (\( dir, ( maybe, maybeItem ) ) ->
                         maybe

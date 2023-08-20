@@ -23,7 +23,6 @@ update volume { value } neigh =
                 [ Transition <| Container v ]
     in
     neigh
-        |> Neighborhood.toList
         |> List.filterMap
             (\( dir, ( maybeBuilding, _ ) ) ->
                 maybeBuilding

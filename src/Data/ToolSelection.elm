@@ -9,4 +9,3 @@ type ToolSelection
     | Sorter
     | Floor
     | Delete
-    | Bag Bool

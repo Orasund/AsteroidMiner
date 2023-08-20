@@ -10,13 +10,13 @@ import Data
 import Data.Comet exposing (Comet)
 import Data.Map exposing (Map, Neighborhood, SingleCommand, Square, SquareType(..))
 import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
+import Grid.Bordered as Grid
 import Lib.Neighborhood as Neighborhood
 
 
 type alias Game =
     { comet : Comet
     , map : Map
-    , bag : Bool
     , debts : Int
     }
 
@@ -105,41 +105,15 @@ isGroundType groundType =
         >> Maybe.withDefault False
 
 
-isValidMinePos : Neighborhood.Neighborhood (Maybe Square) -> Bool
-isValidMinePos neigh =
-    [ neigh.up, neigh.left, neigh.right, neigh.down ]
-        |> List.any
-            (Maybe.map
-                (\( a, _ ) ->
-                    case a of
-                        GroundSquare (Mountain _) ->
-                            True
-
-                        _ ->
-                            False
-                )
-                >> Maybe.withDefault False
-            )
-
-
 isValid : ToolSelection -> ( Int, Int ) -> Map -> Bool
 isValid selected position map =
-    case map |> Neighborhood.fromPosition position of
-        Ok ( Just square, neigh ) ->
+    case map |> Grid.get position of
+        Ok (Just square) ->
             case ( selected, square ) of
                 ( ToolSelection.Floor, _ ) ->
                     False
 
                 ( ToolSelection.Delete, ( GroundSquare _, _ ) ) ->
-                    False
-
-                ( ToolSelection.Bag False, ( GroundSquare _, True ) ) ->
-                    True
-
-                ( ToolSelection.Bag False, ( GroundSquare _, False ) ) ->
-                    False
-
-                ( ToolSelection.Bag True, ( GroundSquare _, _ ) ) ->
                     False
 
                 ( ToolSelection.Mine, ( GroundSquare Dirt, _ ) ) ->
@@ -149,7 +123,7 @@ isValid selected position map =
                     True
 
                 ( ToolSelection.Mine, ( GroundSquare (Mountain _), _ ) ) ->
-                    neigh |> isValidMinePos
+                    True
 
                 ( _, ( GroundSquare (Mountain _), _ ) ) ->
                     False
@@ -157,33 +131,14 @@ isValid selected position map =
                 ( ToolSelection.Delete, ( BuildingSquare { sort }, _ ) ) ->
                     sort |> Building.canBreak
 
-                ( ToolSelection.Bag True, ( BuildingSquare { sort, value }, True ) ) ->
-                    if
-                        solveConflict sort
-                            (neigh
-                                |> Neighborhood.map
-                                    (\maybe ->
-                                        ( maybe |> Maybe.andThen getBuildingType
-                                        , maybe
-                                            |> Maybe.map Tuple.second
-                                            |> Maybe.withDefault False
-                                        )
-                                    )
-                            )
-                            { value = value }
-                    then
-                        sort |> Building.isInput
-
-                    else
-                        False
-
                 ( _, _ ) ->
                     False
 
-        Ok ( Nothing, neigh ) ->
+        Ok Nothing ->
             (selected == ToolSelection.Floor)
-                && (neigh
-                        |> Neighborhood.toList
+                && (map
+                        |> Neighborhood.fromPosition position
+                        |> Tuple.second
                         |> List.any (Tuple.second >> (/=) Nothing)
                    )
 

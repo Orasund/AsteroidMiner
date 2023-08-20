@@ -82,12 +82,18 @@ viewSquare { position, onClick, valid } ( squareType, maybeItem ) =
            )
 
 
-view : { onClick : ( Int, Int ) -> msg, selected : ToolSelection, inventory : Int } -> Map -> List ( ( Int, Int ), Tile msg )
+view : { onClick : ( Int, Int ) -> msg, selected : Maybe ToolSelection, inventory : Int } -> Map -> List ( ( Int, Int ), Tile msg )
 view { onClick, selected } map =
     map
         |> Grid.map
             (\pos maybeSquare ->
-                case ( maybeSquare, Game.isValid selected pos map ) of
+                case
+                    ( maybeSquare
+                    , selected
+                        |> Maybe.map (\s -> Game.isValid s pos map)
+                        |> Maybe.withDefault False
+                    )
+                of
                     ( Just square, valid ) ->
                         square
                             |> viewSquare
