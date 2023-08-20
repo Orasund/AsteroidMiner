@@ -4,10 +4,10 @@ import Action exposing (Action)
 import Browser
 import Building exposing (BuildingType(..))
 import Data exposing (fps, size, spriteSize)
+import Data.Map exposing (SquareType(..))
 import Html exposing (Html)
 import Html.Attributes
 import Layout
-import Lib.Map exposing (SquareType(..))
 import Location exposing (Angle(..))
 import Page exposing (GameMode(..))
 import Page.Game as Game

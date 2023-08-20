@@ -2,9 +2,9 @@ module View.Map exposing (view, viewSquareType)
 
 import Building exposing (BuildingType(..), GroundType(..))
 import Data.Game as Game
+import Data.Map exposing (Map, Square, SquareType(..))
 import Data.ToolSelection exposing (ToolSelection(..))
 import Grid.Bordered as Grid
-import Lib.Map exposing (Map, Square, SquareType(..))
 import PixelEngine.Tile as Tile exposing (Tile)
 import View.Tileset as Tileset
 

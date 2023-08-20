@@ -2,8 +2,7 @@ module Building.Container exposing (canStore, update)
 
 import Building exposing (BuildingType(..), Volume(..))
 import Data exposing (maxValue)
-import Data.Map exposing (Neighborhood)
-import Lib.Map exposing (SingleCommand(..))
+import Data.Map exposing (Neighborhood, SingleCommand(..))
 import Lib.Neighborhood as Neighborhood
 
 

@@ -3,11 +3,10 @@ module Page.Game exposing (Model, Msg, init, subscriptions, update, view)
 import Action exposing (Action)
 import Color
 import Data exposing (size, spriteSize, winAt)
-import Data.Map
+import Data.Map exposing (SquareType(..))
 import Html exposing (Html)
 import Html.Attributes
 import Layout
-import Lib.Map exposing (SquareType(..))
 import PixelEngine exposing (Area)
 import PixelEngine.Image as Image
 import PixelEngine.Options as Options exposing (Options, Transition)

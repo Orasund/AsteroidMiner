@@ -8,9 +8,8 @@ import Building.Pipe as Pipe
 import Building.Sorter as Sorter
 import Data
 import Data.Comet exposing (Comet)
-import Data.Map exposing (Neighborhood)
+import Data.Map exposing (Map, Neighborhood, SingleCommand, Square, SquareType(..))
 import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
-import Lib.Map exposing (Map, SingleCommand, Square, SquareType(..))
 import Lib.Neighborhood as Neighborhood
 
 

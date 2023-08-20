@@ -5,12 +5,11 @@ import Building exposing (BuildingType(..), Volume(..))
 import Color
 import Data exposing (size, spriteSize)
 import Data.Game as Game
-import Data.Map
+import Data.Map exposing (Map, SquareType(..))
 import Grid.Bordered as Grid
 import Html exposing (Html)
 import Html.Attributes
 import Layout
-import Lib.Map exposing (Map, SquareType(..))
 import PixelEngine exposing (Area)
 import PixelEngine.Image as Image
 import PixelEngine.Options exposing (Options)

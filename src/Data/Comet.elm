@@ -1,8 +1,8 @@
 module Data.Comet exposing (Comet, new, position, update)
 
 import Data exposing (framesPerComet, size)
+import Data.Map exposing (Map)
 import Grid.Bordered as Grid
-import Lib.Map exposing (Map)
 import Location exposing (Angle(..))
 import Position
 import Random exposing (Generator)

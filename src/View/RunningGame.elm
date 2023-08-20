@@ -5,10 +5,9 @@ import Color
 import Data exposing (floorCosts, fps, size, spriteSize)
 import Data.Comet as Comet exposing (Comet)
 import Data.Game as Game exposing (Game)
-import Data.Map
+import Data.Map exposing (Map, Square, SquareType(..))
 import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
 import Grid.Bordered as Grid exposing (Error(..))
-import Lib.Map exposing (Map, Square, SquareType(..))
 import Lib.Neighborhood as Neighborhood
 import Location exposing (Angle(..))
 import PixelEngine exposing (Area)

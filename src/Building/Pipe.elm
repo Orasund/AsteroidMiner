@@ -1,8 +1,7 @@
 module Building.Pipe exposing (..)
 
 import Building exposing (BuildingType(..))
-import Data.Map exposing (Neighborhood)
-import Lib.Map exposing (SingleCommand(..))
+import Data.Map exposing (Neighborhood, SingleCommand(..))
 import Lib.Neighborhood as Neighborhood
 
 
