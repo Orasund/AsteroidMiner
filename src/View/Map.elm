@@ -1,6 +1,6 @@
 module View.Map exposing (view, viewItem, viewSquareType)
 
-import Building exposing (BuildingType(..))
+import Building exposing (BuildingType(..), Code(..))
 import Data.Game as Game
 import Data.Item exposing (Item(..))
 import Data.Map as Map exposing (GroundType(..), Map, Square)
@@ -39,6 +39,9 @@ viewSquareType squareType =
 
                 Building.ColoredConveyorBelt color direction ->
                     Tileset.coloredConveyorBelt color direction
+
+                Building.Pipe ->
+                    Tileset.conveyorBelt (Try Blue)
 
                 Building.Container volume ->
                     Tileset.container volume
