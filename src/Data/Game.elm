@@ -10,8 +10,7 @@ import Data
 import Data.Comet exposing (Comet)
 import Data.Map exposing (GroundType(..), Map, Neighborhood, Square)
 import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
-import Lib.Command exposing (SingleCommand)
-import Lib.Map exposing (SquareType(..))
+import Lib.Map exposing (SingleCommand, SquareType(..))
 import Lib.Neighborhood as Neighborhood
 
 

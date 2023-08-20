@@ -3,8 +3,7 @@ module Data.Map exposing (GroundType(..), Map, Neighborhood, Square, SquareType,
 import Building exposing (BuildingType(..), Volume(..))
 import Data exposing (size)
 import Grid.Bordered as Grid
-import Lib.Command exposing (SingleCommand)
-import Lib.Map as Map exposing (SquareType(..))
+import Lib.Map as Map exposing (SingleCommand, SquareType(..))
 import Lib.Neighborhood as Neighborhood
 
 

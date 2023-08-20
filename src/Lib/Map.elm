@@ -1,11 +1,18 @@
-module Lib.Map exposing (Map, Square, SquareType(..), apply)
+module Lib.Map exposing (Map, SingleCommand(..), Square, SquareType(..), apply)
 
 import Building exposing (Building, BuildingType)
 import Data exposing (maxValue)
 import Direction exposing (Direction)
 import Grid.Bordered as Grid exposing (Error(..), Grid)
-import Lib.Command exposing (SingleCommand(..))
 import Position
+
+
+type SingleCommand
+    = Store
+    | Send Direction
+    | Create
+    | Transition BuildingType
+    | Destroy
 
 
 type SquareType a b

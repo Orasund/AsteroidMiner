@@ -2,7 +2,7 @@ module Building.Mine exposing (canStore, update)
 
 import Building exposing (BuildingType(..))
 import Data.Map exposing (Neighborhood)
-import Lib.Command exposing (SingleCommand(..))
+import Lib.Map exposing (SingleCommand(..))
 import Lib.Neighborhood as Neighborhood
 
 
