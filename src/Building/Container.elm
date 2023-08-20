@@ -25,7 +25,19 @@ update volume { value } neigh =
                 Command.transition <| Container v
     in
     neigh
-        |> Neighborhood.filter Building.isOutput
+        |> Neighborhood.toList
+        |> List.filterMap
+            (\( dir, ( maybeBuilding, _ ) ) ->
+                maybeBuilding
+                    |> Maybe.andThen
+                        (\building ->
+                            if Building.isOutput building then
+                                ( dir, maybeBuilding ) |> Just
+
+                            else
+                                Nothing
+                        )
+            )
         |> List.map (Tuple.first >> Command.send)
         |> (::)
             (if value == 0 then

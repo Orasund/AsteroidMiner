@@ -81,6 +81,9 @@ viewBlueprint selected blueprint =
                 ToolSelection.ConveyorBelt _ ->
                     Tileset.conveyorBelt
 
+                ToolSelection.Pipe ->
+                    Tileset.conveyorBelt
+
                 ToolSelection.Container ->
                     Tileset.container
 
@@ -130,6 +133,9 @@ viewDesc selected =
                 ToolSelection.ConveyorBelt Yellow ->
                     "Conveyor Belt (Yellow) - Transports items"
 
+                ToolSelection.Pipe ->
+                    "Pipe - Transports items"
+
                 ToolSelection.Container ->
                     "Container - Stores " ++ String.fromInt maxValue ++ " items"
 
@@ -156,8 +162,7 @@ view bag inventory { selected } =
     List.concat
         [ [ Bag bag
           , Mine
-          , ConveyorBelt Red
-          , ConveyorBelt Blue
+          , Pipe
           , Container
           , Merger
           , Sorter

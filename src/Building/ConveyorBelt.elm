@@ -538,15 +538,54 @@ update code neigh =
     let
         friends : List ( Direction, Maybe BuildingType )
         friends =
-            neigh |> Neighborhood.filter Building.isConveyorBelt
+            neigh
+                |> Neighborhood.toList
+                |> List.filterMap
+                    (\( dir, ( maybeBuilding, _ ) ) ->
+                        maybeBuilding
+                            |> Maybe.andThen
+                                (\building ->
+                                    if building |> Building.isConveyorBelt then
+                                        Just ( dir, maybeBuilding )
+
+                                    else
+                                        Nothing
+                                )
+                    )
 
         outputs : List ( Direction, Maybe BuildingType )
         outputs =
-            neigh |> Neighborhood.filter Building.isOutput
+            neigh
+                |> Neighborhood.toList
+                |> List.filterMap
+                    (\( dir, ( maybeBuilding, _ ) ) ->
+                        maybeBuilding
+                            |> Maybe.andThen
+                                (\building ->
+                                    if building |> Building.isOutput then
+                                        Just ( dir, maybeBuilding )
+
+                                    else
+                                        Nothing
+                                )
+                    )
 
         inputs : List ( Direction, Maybe BuildingType )
         inputs =
-            neigh |> Neighborhood.filter Building.isInput
+            neigh
+                |> Neighborhood.toList
+                |> List.filterMap
+                    (\( dir, ( maybeBuilding, _ ) ) ->
+                        maybeBuilding
+                            |> Maybe.andThen
+                                (\building ->
+                                    if building |> Building.isInput then
+                                        Just ( dir, maybeBuilding )
+
+                                    else
+                                        Nothing
+                                )
+                    )
     in
     { friends = friends, inputs = inputs, outputs = outputs }
         |> (case code of
@@ -559,14 +598,36 @@ update code neigh =
                 Try color ->
                     updateTryColor color <|
                         (neigh
-                            |> Neighborhood.filter
-                                (Building.isConveyorBeltColored color)
+                            |> Neighborhood.toList
+                            |> List.filterMap
+                                (\( dir, ( maybeBuilding, _ ) ) ->
+                                    maybeBuilding
+                                        |> Maybe.andThen
+                                            (\building ->
+                                                if Building.isConveyorBeltColored color building then
+                                                    ( dir, maybeBuilding ) |> Just
+
+                                                else
+                                                    Nothing
+                                            )
+                                )
                         )
 
                 Failed color ->
                     updateFailedColor color <|
                         (neigh
-                            |> Neighborhood.filter
-                                (Building.isConveyorBeltColored (color |> nextColor))
+                            |> Neighborhood.toList
+                            |> List.filterMap
+                                (\( dir, ( maybeBuilding, _ ) ) ->
+                                    maybeBuilding
+                                        |> Maybe.andThen
+                                            (\building ->
+                                                if Building.isConveyorBeltColored (color |> nextColor) building then
+                                                    ( dir, maybeBuilding ) |> Just
+
+                                                else
+                                                    Nothing
+                                            )
+                                )
                         )
            )

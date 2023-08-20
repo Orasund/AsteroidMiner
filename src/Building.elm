@@ -28,6 +28,7 @@ type BuildingType
     = Mine
     | ConveyorBelt Code
     | ColoredConveyorBelt BeltColor Direction
+    | Pipe
     | Container Volume
     | Merger
     | Sorter

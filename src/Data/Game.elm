@@ -6,6 +6,7 @@ import Building.Container as Container
 import Building.ConveyorBelt as ConveyorBelt
 import Building.Merger as Merger
 import Building.Mine as Mine
+import Building.Pipe as Pipe
 import Building.Sorter as Sorter
 import Data
 import Data.Comet exposing (Comet)
@@ -33,6 +34,9 @@ solveConflict sort neigh =
         Building.ConveyorBelt _ ->
             ConveyorBelt.canStore neigh
 
+        Building.Pipe ->
+            Pipe.canStore neigh
+
         Building.Mine ->
             Mine.canStore neigh
 
@@ -54,6 +58,9 @@ updateBuilding sort =
 
         Building.ConveyorBelt code ->
             always <| ConveyorBelt.update code
+
+        Building.Pipe ->
+            \_ -> Pipe.update
 
         Building.Mine ->
             Mine.update
@@ -165,7 +172,19 @@ isValid selected position map =
                     sort |> Building.canBreak
 
                 ( ToolSelection.Bag (Just a), ( BuildingSquare { sort, value }, Just b ) ) ->
-                    if solveConflict sort (neigh |> Neighborhood.map (Maybe.andThen getBuildingType)) a { item = b, value = value } then
+                    if
+                        solveConflict sort
+                            (neigh
+                                |> Neighborhood.map
+                                    (\maybe ->
+                                        ( maybe |> Maybe.andThen getBuildingType
+                                        , maybe |> Maybe.andThen Tuple.second
+                                        )
+                                    )
+                            )
+                            a
+                            { item = b, value = value }
+                    then
                         sort |> Building.isInput
 
                     else

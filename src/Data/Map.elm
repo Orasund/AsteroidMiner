@@ -16,7 +16,7 @@ type GroundType
 
 
 type alias Neighborhood =
-    Neighborhood.Neighborhood (Maybe BuildingType)
+    Neighborhood.Neighborhood ( Maybe BuildingType, Maybe Item )
 
 
 type alias Command =

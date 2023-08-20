@@ -109,7 +109,11 @@ timePassed ({ game, seed, winCondition } as model) =
                                         { value = value, item = maybeItem }
                                         (neigh
                                             |> Neighborhood.map
-                                                (Maybe.andThen Game.getBuildingType)
+                                                (\maybe ->
+                                                    ( maybe |> Maybe.andThen Game.getBuildingType
+                                                    , maybe |> Maybe.andThen Tuple.second
+                                                    )
+                                                )
                                         )
 
                                 _ ->
@@ -123,7 +127,11 @@ timePassed ({ game, seed, winCondition } as model) =
                                             sort
                                             (neigh
                                                 |> Neighborhood.map
-                                                    (Maybe.andThen Game.getBuildingType)
+                                                    (\maybe ->
+                                                        ( maybe |> Maybe.andThen Game.getBuildingType
+                                                        , maybe |> Maybe.andThen Tuple.second
+                                                        )
+                                                    )
                                             )
 
                                 _ ->
@@ -333,6 +341,9 @@ squareClicked position ({ gui, game } as model) =
 
         ToolSelection.ConveyorBelt color ->
             Building.ConveyorBelt (Try color) |> build
+
+        ToolSelection.Pipe ->
+            Building.Pipe |> build
 
         ToolSelection.Container ->
             Building.Container Empty |> build

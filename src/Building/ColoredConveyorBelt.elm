@@ -52,25 +52,71 @@ update color direction neigh =
         friends =
             List.concat
                 [ neigh
-                    |> Neighborhood.filter
-                        (\a ->
-                            (a == (ConveyorBelt <| Try color))
-                                || (a == (ConveyorBelt <| Failed color))
+                    |> Neighborhood.toList
+                    |> List.filterMap
+                        (\( dir, ( maybeBuilding, _ ) ) ->
+                            maybeBuilding
+                                |> Maybe.andThen
+                                    (\building ->
+                                        if
+                                            (building == (ConveyorBelt <| Try color))
+                                                || (building == (ConveyorBelt <| Failed color))
+                                        then
+                                            ( dir, maybeBuilding ) |> Just
+
+                                        else
+                                            Nothing
+                                    )
                         )
                 , neigh
-                    |> Neighborhood.filter
-                        (Building.isConveyorBeltColored color)
+                    |> Neighborhood.toList
+                    |> List.filterMap
+                        (\( dir, ( maybeBuilding, _ ) ) ->
+                            maybeBuilding
+                                |> Maybe.andThen
+                                    (\building ->
+                                        if Building.isConveyorBeltColored color building then
+                                            ( dir, maybeBuilding ) |> Just
+
+                                        else
+                                            Nothing
+                                    )
+                        )
                 ]
 
         outputs : List ( Direction, Maybe BuildingType )
         outputs =
             neigh
-                |> Neighborhood.filter Building.isOutput
+                |> Neighborhood.toList
+                |> List.filterMap
+                    (\( dir, ( maybeBuilding, _ ) ) ->
+                        maybeBuilding
+                            |> Maybe.andThen
+                                (\building ->
+                                    if Building.isOutput building then
+                                        Just ( dir, maybeBuilding )
+
+                                    else
+                                        Nothing
+                                )
+                    )
 
         inputs : List ( Direction, Maybe BuildingType )
         inputs =
             neigh
-                |> Neighborhood.filter Building.isInput
+                |> Neighborhood.toList
+                |> List.filterMap
+                    (\( dir, ( maybeBuilding, _ ) ) ->
+                        maybeBuilding
+                            |> Maybe.andThen
+                                (\building ->
+                                    if Building.isInput building then
+                                        Just ( dir, maybeBuilding )
+
+                                    else
+                                        Nothing
+                                )
+                    )
 
         isValid : Bool
         isValid =

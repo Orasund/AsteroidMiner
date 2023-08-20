@@ -17,7 +17,7 @@ update neigh =
     neigh
         |> Neighborhood.toList
         |> List.filterMap
-            (\( dir, a ) ->
+            (\( dir, ( a, _ ) ) ->
                 case a of
                     Just (ColoredConveyorBelt _ d) ->
                         if dir == d then

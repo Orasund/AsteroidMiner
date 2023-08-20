@@ -1,4 +1,4 @@
-module Lib.Neighborhood exposing (Neighborhood, filter, fromPosition, map, toList)
+module Lib.Neighborhood exposing (Neighborhood, fromPosition, map, toList)
 
 import Direction exposing (Direction(..))
 import Grid.Bordered as Grid exposing (Error, Grid)
@@ -16,16 +16,6 @@ type alias Neighborhood a =
 toList : Neighborhood a -> List ( Direction, a )
 toList { up, left, right, down } =
     [ ( Up, up ), ( Left, left ), ( Right, right ), ( Down, down ) ]
-
-
-filter : (a -> Bool) -> Neighborhood (Maybe a) -> List ( Direction, Maybe a )
-filter fun =
-    toList
-        >> List.filter
-            (Tuple.second
-                >> Maybe.map fun
-                >> Maybe.withDefault False
-            )
 
 
 fromPosition : ( Int, Int ) -> Grid a -> Result Error ( Maybe a, Neighborhood (Maybe a) )

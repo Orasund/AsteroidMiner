@@ -13,6 +13,7 @@ type BeltColor
 type ToolSelection
     = Mine
     | ConveyorBelt BeltColor
+    | Pipe
     | Container
     | Merger
     | Sorter
