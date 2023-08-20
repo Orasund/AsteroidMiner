@@ -68,18 +68,8 @@ updateBuilding sort =
             always <| Sorter.update
 
 
-newBuilding : Maybe Item -> BuildingType -> Square
-newBuilding maybeItem buildingType =
-    let
-        value : Int
-        value =
-            case buildingType of
-                Building.Mine ->
-                    mineVolume
-
-                _ ->
-                    0
-    in
+newBuilding : Maybe Item -> Int -> BuildingType -> Square
+newBuilding maybeItem value buildingType =
     ( BuildingSquare { value = value, sort = buildingType }, maybeItem )
 
 
@@ -127,8 +117,13 @@ isValidMinePos neigh =
     [ neigh.up, neigh.left, neigh.right, neigh.down ]
         |> List.any
             (Maybe.map
-                (Tuple.first
-                    >> ((/=) <| GroundSquare Mountain)
+                (\( a, _ ) ->
+                    case a of
+                        GroundSquare (Mountain _) ->
+                            True
+
+                        _ ->
+                            False
                 )
                 >> Maybe.withDefault False
             )
@@ -160,10 +155,10 @@ isValid selected position map =
                 ( _, ( GroundSquare Dirt, _ ) ) ->
                     True
 
-                ( View.Mine, ( GroundSquare Mountain, _ ) ) ->
+                ( View.Mine, ( GroundSquare (Mountain _), _ ) ) ->
                     neigh |> isValidMinePos
 
-                ( _, ( GroundSquare Mountain, _ ) ) ->
+                ( _, ( GroundSquare (Mountain _), _ ) ) ->
                     False
 
                 ( View.Delete, ( BuildingSquare { sort }, _ ) ) ->

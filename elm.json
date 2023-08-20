@@ -8,6 +8,7 @@
         "direct": {
             "Orasund/elm-action": "2.1.3",
             "Orasund/elm-game-essentials": "3.0.0",
+            "Orasund/elm-layout": "2.0.0",
             "Orasund/pixelengine": "6.2.0",
             "avh4/elm-color": "1.0.0",
             "elm/browser": "1.0.2",

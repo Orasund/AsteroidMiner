@@ -19,8 +19,12 @@ viewSquareType squareType =
                 Dirt ->
                     Tileset.ground
 
-                Mountain ->
-                    Tileset.mountain
+                Mountain { big } ->
+                    if big then
+                        Tileset.bigMountain
+
+                    else
+                        Tileset.mountain
 
                 OreGround ->
                     Tileset.oreGround

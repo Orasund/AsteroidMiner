@@ -1,4 +1,4 @@
-module View.RunningGame exposing (Model, Msg(..), Status(..), areas, init, subscriptions, update)
+module View.RunningGame exposing (Model, Msg(..), Status(..), areas, gameArea, guiArea, init, subscriptions, update)
 
 import Building exposing (BuildingType(..), Code(..), Volume(..))
 import Color
@@ -191,15 +191,22 @@ placeSquare building position ({ game } as model) =
         updateSquare : BuildingType -> Maybe Square -> Result () (Maybe Square)
         updateSquare b maybeSquare =
             case maybeSquare of
-                Just ( GroundSquare Mountain, _ ) ->
-                    Ok <|
-                        Just <|
-                            Game.newBuilding (Just Stone) b
+                Just ( GroundSquare (Mountain { big }), _ ) ->
+                    b
+                        |> Game.newBuilding (Just Stone)
+                            (if big then
+                                Data.mineVolume * 2
+
+                             else
+                                Data.mineVolume
+                            )
+                        |> Just
+                        |> Ok
 
                 Just ( _, maybeItem ) ->
                     Ok <|
                         Just <|
-                            Game.newBuilding maybeItem b
+                            Game.newBuilding maybeItem 0 b
 
                 Nothing ->
                     Err ()
@@ -382,39 +389,44 @@ viewComet comet =
     ( Comet.position comet, Tileset.comet )
 
 
-areas : List ( ( Int, Int ), Tile Msg ) -> Model -> List (Area Msg)
-areas content { game, gui, inventory } =
-    let
-        { map, comet, bag } =
-            game
-    in
-    [ PixelEngine.tiledArea
-        { rows = size - 3
-        , tileset = tileset
-        , background =
-            PixelEngine.imageBackground
-                { source = "background.png"
-                , width = spriteSize
-                , height = spriteSize
-                }
-        }
-      <|
-        List.concat
-            [ Map.view
-                { onClick = SquareClicked
-                , selected = gui.selected
-                , inventory = inventory
-                }
-                map
-            , [ viewComet comet ]
-            , content
-            ]
-    , PixelEngine.imageArea
+gameArea : List ( ( Int, Int ), Tile Msg ) -> Model -> Area Msg
+gameArea content model =
+    List.concat
+        [ Map.view
+            { onClick = SquareClicked
+            , selected = model.gui.selected
+            , inventory = model.inventory
+            }
+            model.game.map
+        , [ viewComet model.game.comet ]
+        , content
+        ]
+        |> PixelEngine.tiledArea
+            { rows = size
+            , tileset = tileset
+            , background =
+                PixelEngine.imageBackground
+                    { source = "background.png"
+                    , width = spriteSize
+                    , height = spriteSize
+                    }
+            }
+
+
+guiArea : Model -> Area Msg
+guiArea model =
+    PixelEngine.imageArea
         { height = 3 * spriteSize
         , background =
             PixelEngine.colorBackground <|
                 Color.rgb255 20 12 28
         }
-        (GUI.view bag inventory gui)
+        (GUI.view model.game.bag model.inventory model.gui)
         |> PixelEngine.mapArea GuiSpecific
+
+
+areas : List ( ( Int, Int ), Tile Msg ) -> Model -> List (Area Msg)
+areas content model =
+    [ gameArea content model
+    , guiArea model
     ]

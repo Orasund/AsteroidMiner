@@ -1,5 +1,6 @@
 module View.Tileset exposing
     ( background
+    , bigMountain
     , coloredConveyorBelt
     , comet
     , container
@@ -49,7 +50,6 @@ background =
 valid : Tile msg
 valid =
     Tile.fromPosition ( 4, 5 )
-        |> Tile.animated 4
 
 
 ground : Tile msg
@@ -60,6 +60,11 @@ ground =
 mountain : Tile msg
 mountain =
     Tile.fromPosition ( 0, 1 )
+
+
+bigMountain : Tile msg
+bigMountain =
+    Tile.fromPosition ( 1, 1 )
 
 
 oreGround : Tile msg

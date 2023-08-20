@@ -43,7 +43,7 @@ framesPerComet =
 
 size : Int
 size =
-    32
+    16
 
 
 spriteSize : Float

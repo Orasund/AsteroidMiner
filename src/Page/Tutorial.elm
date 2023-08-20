@@ -8,12 +8,16 @@ import Data.Game as Game
 import Data.Item exposing (Item(..))
 import Data.Map as Map exposing (Map)
 import Grid.Bordered as Grid
+import Html exposing (Html)
+import Html.Attributes
+import Layout
 import Lib.Map exposing (SquareType(..))
 import PixelEngine exposing (Area)
 import PixelEngine.Image as Image
 import PixelEngine.Options as Options exposing (Options, Transition)
 import PixelEngine.Tile as Tile exposing (Tile)
 import Random exposing (Seed)
+import View
 import View.RunningGame as RunningGame exposing (Status(..))
 import View.Tileset as Tileset
 
@@ -43,95 +47,95 @@ tutorial : Int -> Map -> Map
 tutorial num map =
     (case num of
         1 ->
-            [ ( ( 20, 20 ), Mine |> Game.newBuilding (Just Stone) )
-            , ( ( 22, 20 ), Container Empty |> Game.newBuilding Nothing )
+            [ ( ( 20, 20 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
+            , ( ( 22, 20 ), Container Empty |> Game.newBuilding Nothing 0 )
 
             --
-            , ( ( 21, 18 ), ConveyorBelt Invalid |> Game.newBuilding Nothing )
-            , ( ( 22, 18 ), Container Empty |> Game.newBuilding Nothing )
+            , ( ( 21, 18 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 22, 18 ), Container Empty |> Game.newBuilding Nothing 0 )
 
             --
-            , ( ( 21, 16 ), ConveyorBelt Invalid |> Game.newBuilding Nothing )
-            , ( ( 20, 16 ), Mine |> Game.newBuilding (Just Stone) )
+            , ( ( 21, 16 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 20, 16 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
 
             --
-            , ( ( 20, 14 ), Mine |> Game.newBuilding (Just Stone) )
-            , ( ( 21, 14 ), ConveyorBelt Invalid |> Game.newBuilding Nothing )
-            , ( ( 22, 14 ), Container Empty |> Game.newBuilding Nothing )
+            , ( ( 20, 14 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
+            , ( ( 21, 14 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 22, 14 ), Container Empty |> Game.newBuilding Nothing 0 )
             ]
 
         2 ->
-            [ ( ( 20, 16 ), Mine |> Game.newBuilding (Just Stone) )
-            , ( ( 21, 16 ), ConveyorBelt Invalid |> Game.newBuilding Nothing )
-            , ( ( 22, 16 ), ConveyorBelt Invalid |> Game.newBuilding Nothing )
-            , ( ( 23, 16 ), Container Empty |> Game.newBuilding Nothing )
+            [ ( ( 20, 16 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
+            , ( ( 21, 16 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 22, 16 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 23, 16 ), Container Empty |> Game.newBuilding Nothing 0 )
 
             --
-            , ( ( 20, 15 ), Mine |> Game.newBuilding (Just Stone) )
-            , ( ( 23, 15 ), Container Empty |> Game.newBuilding Nothing )
+            , ( ( 20, 15 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
+            , ( ( 23, 15 ), Container Empty |> Game.newBuilding Nothing 0 )
 
             --
-            , ( ( 20, 14 ), Mine |> Game.newBuilding (Just Stone) )
-            , ( ( 23, 14 ), Container Empty |> Game.newBuilding Nothing )
+            , ( ( 20, 14 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
+            , ( ( 23, 14 ), Container Empty |> Game.newBuilding Nothing 0 )
 
             --
-            , ( ( 19, 13 ), Mine |> Game.newBuilding (Just Stone) )
-            , ( ( 20, 13 ), ConveyorBelt Invalid |> Game.newBuilding Nothing )
-            , ( ( 21, 13 ), ConveyorBelt Invalid |> Game.newBuilding Nothing )
-            , ( ( 22, 13 ), ConveyorBelt Invalid |> Game.newBuilding Nothing )
-            , ( ( 23, 13 ), Container Empty |> Game.newBuilding Nothing )
+            , ( ( 19, 13 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
+            , ( ( 20, 13 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 21, 13 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 22, 13 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 23, 13 ), Container Empty |> Game.newBuilding Nothing 0 )
 
             --
-            , ( ( 18, 12 ), Mine |> Game.newBuilding (Just Stone) )
-            , ( ( 23, 12 ), Container Empty |> Game.newBuilding Nothing )
+            , ( ( 18, 12 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
+            , ( ( 23, 12 ), Container Empty |> Game.newBuilding Nothing 0 )
             ]
 
         3 ->
-            [ ( ( 20, 14 ), Mine |> Game.newBuilding (Just Stone) )
-            , ( ( 21, 14 ), ConveyorBelt Invalid |> Game.newBuilding Nothing )
-            , ( ( 22, 14 ), Container Empty |> Game.newBuilding Nothing )
-            , ( ( 23, 14 ), Merger |> Game.newBuilding Nothing )
-            , ( ( 23, 12 ), Container Empty |> Game.newBuilding Nothing )
+            [ ( ( 20, 14 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
+            , ( ( 21, 14 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 22, 14 ), Container Empty |> Game.newBuilding Nothing Data.mineVolume )
+            , ( ( 23, 14 ), Merger |> Game.newBuilding Nothing 0 )
+            , ( ( 23, 12 ), Container Empty |> Game.newBuilding Nothing 0 )
 
             --
-            , ( ( 20, 16 ), Mine |> Game.newBuilding (Just Stone) )
-            , ( ( 21, 16 ), ConveyorBelt Invalid |> Game.newBuilding Nothing )
-            , ( ( 22, 16 ), Container Empty |> Game.newBuilding Nothing )
-            , ( ( 23, 16 ), Merger |> Game.newBuilding Nothing )
-            , ( ( 23, 17 ), ConveyorBelt Invalid |> Game.newBuilding Nothing )
-            , ( ( 23, 18 ), Container Empty |> Game.newBuilding Nothing )
+            , ( ( 20, 16 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
+            , ( ( 21, 16 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 22, 16 ), Container Empty |> Game.newBuilding Nothing 0 )
+            , ( ( 23, 16 ), Merger |> Game.newBuilding Nothing 0 )
+            , ( ( 23, 17 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 23, 18 ), Container Empty |> Game.newBuilding Nothing 0 )
 
             --
-            , ( ( 19, 20 ), Mine |> Game.newBuilding (Just Stone) )
-            , ( ( 20, 20 ), ConveyorBelt Invalid |> Game.newBuilding Nothing )
-            , ( ( 21, 20 ), Container Empty |> Game.newBuilding Nothing )
-            , ( ( 22, 20 ), Merger |> Game.newBuilding Nothing )
-            , ( ( 22, 19 ), ConveyorBelt Invalid |> Game.newBuilding Nothing )
-            , ( ( 22, 18 ), ConveyorBelt Invalid |> Game.newBuilding Nothing )
+            , ( ( 19, 20 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
+            , ( ( 20, 20 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 21, 20 ), Container Empty |> Game.newBuilding Nothing 0 )
+            , ( ( 22, 20 ), Merger |> Game.newBuilding Nothing 0 )
+            , ( ( 22, 19 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 22, 18 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
 
             --
-            , ( ( 18, 12 ), Mine |> Game.newBuilding (Just Stone) )
-            , ( ( 19, 12 ), ConveyorBelt Invalid |> Game.newBuilding Nothing )
-            , ( ( 20, 12 ), Container Empty |> Game.newBuilding Nothing )
-            , ( ( 22, 12 ), ConveyorBelt Invalid |> Game.newBuilding Nothing )
+            , ( ( 18, 12 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
+            , ( ( 19, 12 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 20, 12 ), Container Empty |> Game.newBuilding Nothing 0 )
+            , ( ( 22, 12 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
             ]
 
         4 ->
-            [ ( ( 18, 12 ), Mine |> Game.newBuilding (Just Stone) )
-            , ( ( 19, 13 ), Mine |> Game.newBuilding (Just Stone) )
-            , ( ( 20, 12 ), Container Empty |> Game.newBuilding Nothing )
+            [ ( ( 18, 12 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
+            , ( ( 19, 13 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
+            , ( ( 20, 12 ), Container Empty |> Game.newBuilding Nothing 0 )
 
             --
-            , ( ( 20, 15 ), Mine |> Game.newBuilding (Just Stone) )
-            , ( ( 21, 15 ), ConveyorBelt Invalid |> Game.newBuilding Nothing )
-            , ( ( 23, 15 ), Container Empty |> Game.newBuilding Nothing )
-            , ( ( 22, 14 ), Container Empty |> Game.newBuilding Nothing )
+            , ( ( 20, 15 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
+            , ( ( 21, 15 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 23, 15 ), Container Empty |> Game.newBuilding Nothing 0 )
+            , ( ( 22, 14 ), Container Empty |> Game.newBuilding Nothing 0 )
 
             --
-            , ( ( 20, 20 ), Mine |> Game.newBuilding (Just Stone) )
-            , ( ( 19, 21 ), Mine |> Game.newBuilding (Just Stone) )
-            , ( ( 20, 21 ), Sorter |> Game.newBuilding Nothing )
-            , ( ( 21, 21 ), Container Empty |> Game.newBuilding Nothing )
+            , ( ( 20, 20 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
+            , ( ( 19, 21 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
+            , ( ( 20, 21 ), Sorter |> Game.newBuilding Nothing 0 )
+            , ( ( 21, 21 ), Container Empty |> Game.newBuilding Nothing 0 )
             ]
 
         _ ->
@@ -248,8 +252,8 @@ areas { num, content } =
                                 ( ( x + i, y ), letter )
                             )
             in
-            content
-                |> RunningGame.areas
+            [ content
+                |> RunningGame.gameArea
                     (case num of
                         1 ->
                             List.concat
@@ -329,6 +333,8 @@ areas { num, content } =
                                         ( ( 0 + i, 0 ), letter )
                                     )
                     )
+            , RunningGame.guiArea content
+            ]
                 |> List.map (PixelEngine.mapArea GameSpecific)
 
 
@@ -336,34 +342,20 @@ view :
     (Msg -> msg)
     -> Options msg
     -> Model
-    -> { options : Options msg, body : List (Area msg) }
-view mapper options ({ content } as model) =
-    let
-        transition : Transition
-        transition =
-            Options.transition
-                "win_transition"
-                { start = "opacity:1;filter: blur(0px);"
-                , keyFrames =
-                    [ Just "opacity:1;filter: blur(0px);"
-                    , Nothing
-                    ]
-                , end = "opacity:0;filter: blur(5px);"
-                }
-    in
-    { options =
-        options
-            |> (case content.status of
-                    Running ->
-                        identity
-
-                    _ ->
-                        Options.withTransitionFrom
-                            (content
-                                |> RunningGame.areas []
-                                |> List.map (PixelEngine.mapArea (GameSpecific >> mapper))
-                            )
-                            transition
-               )
-    , body = model |> areas |> List.map (PixelEngine.mapArea mapper)
-    }
+    -> Html msg
+view mapper options model =
+    [ model
+        |> areas
+        |> List.map (PixelEngine.mapArea mapper)
+        |> PixelEngine.toHtml
+            { options = Just options
+            , width = (toFloat <| Data.size) * Data.spriteSize
+            }
+    ]
+        |> Layout.column
+            ([ Html.Attributes.style "background-color" "rgb(20, 12, 28)"
+             , Html.Attributes.style "height" "100%"
+             , Html.Attributes.style "gap" View.bigSpace
+             ]
+                ++ Layout.centered
+            )

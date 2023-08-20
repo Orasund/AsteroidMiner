@@ -11,7 +11,7 @@ import Lib.Neighborhood as Neighborhood
 
 type GroundType
     = Dirt
-    | Mountain
+    | Mountain { big : Bool }
     | OreGround
 
 
@@ -44,13 +44,14 @@ init =
     in
     Grid.fill
         (\( x, y ) ->
-            if (x - center) ^ 2 + (y - center) ^ 2 <= 8 ^ 2 then
-                Just <|
-                    if (x + 1 - center) ^ 2 + (y - 1 - center) ^ 2 <= 6 ^ 2 then
-                        ( GroundSquare <| Mountain, Nothing )
+            if (x + 1 - center) ^ 2 + (y - 1 - center) ^ 2 <= 1 ^ 2 then
+                ( GroundSquare <| Mountain { big = True }, Nothing ) |> Just
 
-                    else
-                        ( GroundSquare <| Dirt, Nothing )
+            else if (x + 1 - center) ^ 2 + (y - 1 - center) ^ 2 <= 3 ^ 2 then
+                ( GroundSquare <| Mountain { big = False }, Nothing ) |> Just
+
+            else if (x - center) ^ 2 + (y - center) ^ 2 <= 4 ^ 2 then
+                ( GroundSquare <| Dirt, Nothing ) |> Just
 
             else
                 Nothing

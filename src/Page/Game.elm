@@ -4,11 +4,15 @@ import Action exposing (Action)
 import Color
 import Data exposing (size, spriteSize, winAt)
 import Data.Map as Map exposing (GroundType(..))
+import Html exposing (Html)
+import Html.Attributes
+import Layout
 import Lib.Map exposing (SquareType(..))
 import PixelEngine exposing (Area)
 import PixelEngine.Image as Image
 import PixelEngine.Options as Options exposing (Options, Transition)
 import Random exposing (Seed)
+import View
 import View.RunningGame as RunningGame exposing (Status(..))
 import View.Tileset as Tileset
 
@@ -58,8 +62,9 @@ areas : Model -> List (Area Msg)
 areas ({ status } as model) =
     case status of
         Running ->
-            model
-                |> RunningGame.areas []
+            [ RunningGame.gameArea [] model
+            , RunningGame.guiArea model
+            ]
                 |> List.map (PixelEngine.mapArea GameSpecific)
 
         Won ->
@@ -95,34 +100,20 @@ view :
     (Msg -> msg)
     -> Options msg
     -> Model
-    -> { options : Options msg, body : List (Area msg) }
+    -> Html msg
 view mapper options model =
-    let
-        transition : Transition
-        transition =
-            Options.transition
-                "win_transition"
-                { start = "opacity:1;filter: blur(0px);"
-                , keyFrames =
-                    [ Just "opacity:1;filter: blur(0px);"
-                    , Nothing
-                    ]
-                , end = "opacity:0;filter: blur(5px);"
-                }
-    in
-    { options =
-        options
-            |> (case model.status of
-                    Running ->
-                        identity
-
-                    _ ->
-                        Options.withTransitionFrom
-                            (model
-                                |> RunningGame.areas []
-                                |> List.map (PixelEngine.mapArea (GameSpecific >> mapper))
-                            )
-                            transition
-               )
-    , body = model |> areas |> List.map (PixelEngine.mapArea mapper)
-    }
+    [ model
+        |> areas
+        |> List.map (PixelEngine.mapArea mapper)
+        |> PixelEngine.toHtml
+            { options = Just options
+            , width = (toFloat <| Data.size) * Data.spriteSize
+            }
+    ]
+        |> Layout.column
+            ([ Html.Attributes.style "background-color" "rgb(20, 12, 28)"
+             , Html.Attributes.style "height" "100%"
+             , Html.Attributes.style "gap" View.bigSpace
+             ]
+                ++ Layout.centered
+            )

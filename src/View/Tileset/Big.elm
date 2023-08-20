@@ -12,8 +12,10 @@ module View.Tileset.Big exposing
     )
 
 import Data exposing (spriteSize)
+import Html exposing (Html)
 import PixelEngine.Image as Image exposing (Image)
 import PixelEngine.Tile as Tile exposing (Tile, Tileset)
+import View
 import View.Tileset as Tileset
 
 
@@ -161,13 +163,25 @@ floor =
     }
 
 
-gameMenuButton : Image msg
+gameMenuButton : Html msg
 gameMenuButton =
-    Tile.fromPosition ( 12, 8 )
-        |> defaultButton
+    View.sprite
+        []
+        { spriteHeight = 8
+        , spriteWidth = 8
+        , sprite = ( 12, 8 )
+        , url = "tileset.png"
+        , scale = 2
+        }
 
 
-tutorialMenuButton : Image msg
+tutorialMenuButton : Html msg
 tutorialMenuButton =
-    Tile.fromPosition ( 13, 8 )
-        |> defaultButton
+    View.sprite
+        []
+        { spriteHeight = 8
+        , spriteWidth = 8
+        , sprite = ( 13, 8 )
+        , url = "tileset.png"
+        , scale = 2
+        }

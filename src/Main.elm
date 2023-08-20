@@ -1,8 +1,12 @@
 module Main exposing (main)
 
 import Action exposing (Action)
+import Browser
 import Building exposing (BuildingType(..))
 import Data exposing (fps, size, spriteSize)
+import Html exposing (Html)
+import Html.Attributes
+import Layout
 import Lib.Map exposing (SquareType(..))
 import Location exposing (Angle(..))
 import Page exposing (GameMode(..))
@@ -12,6 +16,7 @@ import Page.Tutorial as Tutorial
 import PixelEngine exposing (Area, Input(..), PixelEngine, gameWithNoControls)
 import PixelEngine.Options as Options exposing (Options)
 import Random exposing (Seed)
+import View
 
 
 
@@ -80,6 +85,7 @@ update msg model =
         ( MenuSpecific menuMsg, Menu menuModel ) ->
             Menu.update menuMsg menuModel
                 |> Action.config
+                |> Action.withUpdate Menu never
                 |> Action.withCustomTransition
                     (\data ->
                         case data of
@@ -130,7 +136,8 @@ subscriptions model =
             Sub.none
 
         Menu _ ->
-            Sub.none
+            Menu.subscriptions
+                |> Sub.map MenuSpecific
 
         Game gameModel ->
             gameModel
@@ -149,30 +156,26 @@ subscriptions model =
 ----------------------
 
 
-view :
-    Model
-    -> { title : String, options : Maybe (Options Msg), body : List (Area Msg) }
+view : Model -> Html Msg
 view model =
     let
         defaultOptions : Options msg
         defaultOptions =
             Options.default
                 |> Options.withMovementSpeed (1 / fps)
+                |> Options.withScale 3
 
-        map : (a -> Msg) -> { options : Options msg, body : List (Area a) } -> { options : Options msg, body : List (Area Msg) }
+        map : (a -> Msg) -> List (Area a) -> List (Area Msg)
         map mapper o =
-            { options = o.options
-            , body = o.body |> List.map (PixelEngine.mapArea mapper)
-            }
+            o |> List.map (PixelEngine.mapArea mapper)
 
-        { options, body } =
+        body =
             case model of
                 Loading ->
-                    { options = defaultOptions, body = [] }
+                    Layout.none
 
                 Menu menuModel ->
-                    Menu.view defaultOptions menuModel
-                        |> map MenuSpecific
+                    Menu.view MenuSpecific defaultOptions menuModel
 
                 Game gameModel ->
                     Game.view GameSpecific defaultOptions gameModel
@@ -180,23 +183,17 @@ view model =
                 Tutorial tutorialModel ->
                     Tutorial.view TutorialSpecific defaultOptions tutorialModel
     in
-    { title = "Asteroid Miner"
-    , options = Just options
-    , body = body
-    }
+    [ View.stylesheet
+    , body
+    ]
+        |> Html.div [ Html.Attributes.style "height" "100%" ]
 
 
-height : Float
-height =
-    (toFloat <| size) * spriteSize
-
-
-main : PixelEngine () Model Msg
+main : Program () Model Msg
 main =
-    gameWithNoControls
+    Browser.element
         { init = init
         , update = update
         , subscriptions = subscriptions
         , view = view
-        , width = height
         }
