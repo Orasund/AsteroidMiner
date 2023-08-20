@@ -1,81 +1,28 @@
-module Lib.Command exposing (Command, apply, batch, create, destroy, idle, send, store, transition)
+module Lib.Command exposing (SingleCommand(..), apply)
 
+import Building exposing (BuildingType)
 import Direction exposing (Direction)
 
 
-type SingleCommand a c
+type SingleCommand
     = Store
     | Send Direction
-    | Create c
-    | Transition a
+    | Create
+    | Transition BuildingType
     | Destroy
 
 
-type Command a c
-    = Command (List (SingleCommand a c))
-
-
-batch : List (Command a c) -> Command a c
-batch =
-    List.foldr
-        (\(Command l) ->
-            List.append l
-        )
-        []
-        >> Command
-
-
-idle : Command a c
-idle =
-    Command []
-
-
-create : c -> Command a c
-create =
-    Create
-        >> List.singleton
-        >> Command
-
-
-store : Command a c
-store =
-    Store
-        |> List.singleton
-        |> Command
-
-
-send : Direction -> Command a c
-send =
-    Send
-        >> List.singleton
-        >> Command
-
-
-transition : a -> Command a c
-transition =
-    Transition
-        >> List.singleton
-        >> Command
-
-
-destroy : Command a c
-destroy =
-    Destroy
-        |> List.singleton
-        |> Command
-
-
 apply :
-    { store : a -> Result x a
-    , send : Direction -> a -> Result x a
-    , transition : b -> a -> Result x a
-    , create : c -> a -> Result x a
-    , destroy : a -> Result x a
+    { store : BuildingType -> Result x BuildingType
+    , send : Direction -> BuildingType -> Result x BuildingType
+    , transition : BuildingType -> BuildingType -> Result x BuildingType
+    , create : BuildingType -> Result x BuildingType
+    , destroy : BuildingType -> Result x BuildingType
     }
-    -> Command b c
-    -> a
-    -> a
-apply fun (Command command) b =
+    -> List SingleCommand
+    -> BuildingType
+    -> BuildingType
+apply fun command b =
     command
         |> List.filterMap
             (\c ->
@@ -90,8 +37,8 @@ apply fun (Command command) b =
                             Transition sort ->
                                 fun.transition sort
 
-                            Create item ->
-                                fun.create item
+                            Create ->
+                                fun.create
 
                             Destroy ->
                                 fun.destroy

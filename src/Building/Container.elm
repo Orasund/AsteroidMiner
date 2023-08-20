@@ -2,27 +2,26 @@ module Building.Container exposing (canStore, update)
 
 import Building exposing (BuildingType(..), Volume(..))
 import Data exposing (maxValue)
-import Data.Item exposing (Item)
-import Data.Map exposing (Command, Neighborhood)
-import Lib.Command as Command
+import Data.Map exposing (Neighborhood)
+import Lib.Command exposing (SingleCommand(..))
 import Lib.Neighborhood as Neighborhood
 
 
-canStore : Neighborhood -> Item -> { value : Int, item : Item } -> Bool
-canStore _ input { value, item } =
-    (input == item) && (value < maxValue)
+canStore : Neighborhood -> { value : Int } -> Bool
+canStore _ { value } =
+    value < maxValue
 
 
-update : Volume -> { value : Int, item : Maybe Item } -> Neighborhood -> Command
+update : Volume -> { value : Int, item : Bool } -> Neighborhood -> List SingleCommand
 update volume { value } neigh =
     let
-        transition : Volume -> Command
+        transition : Volume -> List SingleCommand
         transition v =
             if volume == v then
-                Command.idle
+                []
 
             else
-                Command.transition <| Container v
+                [ Transition <| Container v ]
     in
     neigh
         |> Neighborhood.toList
@@ -38,8 +37,8 @@ update volume { value } neigh =
                                 Nothing
                         )
             )
-        |> List.map (Tuple.first >> Command.send)
-        |> (::)
+        |> List.map (Tuple.first >> Send)
+        |> (++)
             (if value == 0 then
                 transition Empty
 
@@ -52,4 +51,3 @@ update volume { value } neigh =
              else
                 transition HalfFull
             )
-        |> Command.batch

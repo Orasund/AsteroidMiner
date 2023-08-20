@@ -1,7 +1,6 @@
 module View.Inventory exposing (view)
 
 import Data exposing (size, spriteSize)
-import Data.Item exposing (Item(..))
 import Location exposing (Location)
 import PixelEngine.Image as Image exposing (Image)
 import PixelEngine.Tile as Tile
@@ -68,7 +67,7 @@ view amount =
           , Tileset.tileset
                 |> Image.fromTile
                     (Tile.multipleTiles
-                        [ Tileset.itemBackground, Map.viewItem Stone ]
+                        [ Tileset.itemBackground, Tileset.stone ]
                     )
           )
         , viewAmount { amount = amount, i = 0 }

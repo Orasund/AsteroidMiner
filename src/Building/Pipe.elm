@@ -1,25 +1,24 @@
 module Building.Pipe exposing (..)
 
 import Building exposing (BuildingType(..))
-import Data.Item exposing (Item)
-import Data.Map exposing (Command, Neighborhood)
-import Lib.Command as Command
+import Data.Map exposing (Neighborhood)
+import Lib.Command exposing (SingleCommand(..))
 import Lib.Neighborhood as Neighborhood
 
 
-canStore : Neighborhood -> Item -> { value : Int, item : Item } -> Bool
-canStore _ _ _ =
+canStore : Neighborhood -> { value : Int } -> Bool
+canStore _ _ =
     False
 
 
-update : Neighborhood -> Command
+update : Neighborhood -> List SingleCommand
 update neigh =
     let
         inputs =
             filterMap (\building _ -> building |> Building.isInput)
 
         friends =
-            filterMap (\building maybeItem -> building == Pipe && maybeItem == Nothing)
+            filterMap (\building maybeItem -> building == Pipe && maybeItem == False)
 
         filterMap pred =
             neigh
@@ -39,5 +38,4 @@ update neigh =
     in
     inputs
         ++ friends
-        |> List.map Command.send
-        |> Command.batch
+        |> List.map Send

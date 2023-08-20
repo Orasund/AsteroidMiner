@@ -8,22 +8,22 @@ import Building.Pipe as Pipe
 import Building.Sorter as Sorter
 import Data
 import Data.Comet exposing (Comet)
-import Data.Item exposing (Item)
-import Data.Map as Map exposing (GroundType(..), Map, Neighborhood, Square)
+import Data.Map exposing (GroundType(..), Map, Neighborhood, Square)
 import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
-import Lib.Map as Map exposing (SquareType(..))
+import Lib.Command exposing (SingleCommand)
+import Lib.Map exposing (SquareType(..))
 import Lib.Neighborhood as Neighborhood
 
 
 type alias Game =
     { comet : Comet
     , map : Map
-    , bag : Maybe Item
+    , bag : Bool
     , debts : Int
     }
 
 
-solveConflict : BuildingType -> Neighborhood -> Item -> { item : Item, value : Int } -> Bool
+solveConflict : BuildingType -> Neighborhood -> { value : Int } -> Bool
 solveConflict sort neigh =
     case sort of
         Building.Pipe ->
@@ -42,7 +42,9 @@ solveConflict sort neigh =
             Sorter.canStore neigh
 
 
-updateBuilding : BuildingType -> ({ value : Int, item : Maybe Item } -> Neighborhood -> Map.Command)
+updateBuilding :
+    BuildingType
+    -> ({ value : Int, item : Bool } -> Neighborhood -> List SingleCommand)
 updateBuilding sort =
     case sort of
         Building.Pipe ->
@@ -61,12 +63,12 @@ updateBuilding sort =
             always <| Sorter.update
 
 
-newBuilding : Maybe Item -> Int -> BuildingType -> Square
+newBuilding : Bool -> Int -> BuildingType -> Square
 newBuilding maybeItem value buildingType =
     ( BuildingSquare { value = value, sort = buildingType }, maybeItem )
 
 
-emptySquare : Maybe Item -> Square
+emptySquare : Bool -> Square
 emptySquare maybeItem =
     ( GroundSquare Dirt, maybeItem )
 
@@ -133,13 +135,13 @@ isValid selected position map =
                 ( ToolSelection.Delete, ( GroundSquare _, _ ) ) ->
                     False
 
-                ( ToolSelection.Bag Nothing, ( GroundSquare _, Just _ ) ) ->
+                ( ToolSelection.Bag False, ( GroundSquare _, True ) ) ->
                     True
 
-                ( ToolSelection.Bag Nothing, ( GroundSquare _, Nothing ) ) ->
+                ( ToolSelection.Bag False, ( GroundSquare _, False ) ) ->
                     False
 
-                ( ToolSelection.Bag (Just _), ( GroundSquare _, _ ) ) ->
+                ( ToolSelection.Bag True, ( GroundSquare _, _ ) ) ->
                     False
 
                 ( ToolSelection.Mine, ( GroundSquare Dirt, _ ) ) ->
@@ -157,19 +159,20 @@ isValid selected position map =
                 ( ToolSelection.Delete, ( BuildingSquare { sort }, _ ) ) ->
                     sort |> Building.canBreak
 
-                ( ToolSelection.Bag (Just a), ( BuildingSquare { sort, value }, Just b ) ) ->
+                ( ToolSelection.Bag True, ( BuildingSquare { sort, value }, True ) ) ->
                     if
                         solveConflict sort
                             (neigh
                                 |> Neighborhood.map
                                     (\maybe ->
                                         ( maybe |> Maybe.andThen getBuildingType
-                                        , maybe |> Maybe.andThen Tuple.second
+                                        , maybe
+                                            |> Maybe.map Tuple.second
+                                            |> Maybe.withDefault False
                                         )
                                     )
                             )
-                            a
-                            { item = b, value = value }
+                            { value = value }
                     then
                         sort |> Building.isInput
 

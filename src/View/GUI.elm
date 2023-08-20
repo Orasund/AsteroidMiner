@@ -1,13 +1,11 @@
 module View.GUI exposing (Model, Msg, init, select, toDefault, update, view)
 
 import Data exposing (floorCosts, maxValue, mineVolume, size, spriteSize)
-import Data.Item exposing (Item)
 import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
 import Location exposing (Location)
 import PixelEngine.Image as Image exposing (Image)
 import View
 import View.Inventory as Inventory
-import View.Map as Map
 import View.Tileset exposing (font)
 import View.Tileset.Big as Tileset
 
@@ -23,7 +21,7 @@ type Msg
 
 init : Model
 init =
-    { selected = Bag Nothing
+    { selected = Bag False
     }
 
 
@@ -87,10 +85,11 @@ viewBlueprint selected blueprint =
                 ToolSelection.Delete ->
                     Tileset.delete
 
-                ToolSelection.Bag bag ->
-                    bag
-                        |> Maybe.map Map.viewItem
-                        |> Tileset.pickUp
+                ToolSelection.Bag True ->
+                    Tileset.pickUp (Just View.Tileset.stone)
+
+                ToolSelection.Bag False ->
+                    Tileset.pickUp Nothing
 
                 ToolSelection.Merger ->
                     Tileset.merger
@@ -142,7 +141,7 @@ viewDesc selected =
     [ ( ( 0, (toFloat <| 2) * spriteSize ), Image.fromText text font ) ]
 
 
-view : Maybe Item -> Int -> Model -> List ( Location, Image Msg )
+view : Bool -> Int -> Model -> List ( Location, Image Msg )
 view bag inventory { selected } =
     List.concat
         [ [ Bag bag

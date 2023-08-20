@@ -5,7 +5,6 @@ import Building exposing (BuildingType(..), Volume(..))
 import Color
 import Data exposing (size, spriteSize)
 import Data.Game as Game
-import Data.Item exposing (Item(..))
 import Data.Map as Map exposing (Map)
 import Grid.Bordered as Grid
 import Html exposing (Html)
@@ -47,95 +46,95 @@ tutorial : Int -> Map -> Map
 tutorial num map =
     (case num of
         1 ->
-            [ ( ( 20, 20 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 22, 20 ), Container Empty |> Game.newBuilding Nothing 0 )
+            [ ( ( 20, 20 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 22, 20 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 21, 18 ), Pipe |> Game.newBuilding Nothing 0 )
-            , ( ( 22, 18 ), Container Empty |> Game.newBuilding Nothing 0 )
+            , ( ( 21, 18 ), Pipe |> Game.newBuilding False 0 )
+            , ( ( 22, 18 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 21, 16 ), Pipe |> Game.newBuilding Nothing 0 )
-            , ( ( 20, 16 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
+            , ( ( 21, 16 ), Pipe |> Game.newBuilding False 0 )
+            , ( ( 20, 16 ), Mine |> Game.newBuilding True Data.mineVolume )
 
             --
-            , ( ( 20, 14 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 21, 14 ), Pipe |> Game.newBuilding Nothing 0 )
-            , ( ( 22, 14 ), Container Empty |> Game.newBuilding Nothing 0 )
+            , ( ( 20, 14 ), Mine |> Game.newBuilding (True) Data.mineVolume )
+            , ( ( 21, 14 ), Pipe |> Game.newBuilding False 0 )
+            , ( ( 22, 14 ), Container Empty |> Game.newBuilding False 0 )
             ]
 
         2 ->
-            [ ( ( 20, 16 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 21, 16 ), Pipe |> Game.newBuilding Nothing 0 )
-            , ( ( 22, 16 ), Pipe |> Game.newBuilding Nothing 0 )
-            , ( ( 23, 16 ), Container Empty |> Game.newBuilding Nothing 0 )
+            [ ( ( 20, 16 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 21, 16 ), Pipe |> Game.newBuilding False 0 )
+            , ( ( 22, 16 ), Pipe |> Game.newBuilding False 0 )
+            , ( ( 23, 16 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 20, 15 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 23, 15 ), Container Empty |> Game.newBuilding Nothing 0 )
+            , ( ( 20, 15 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 23, 15 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 20, 14 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 23, 14 ), Container Empty |> Game.newBuilding Nothing 0 )
+            , ( ( 20, 14 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 23, 14 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 19, 13 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 20, 13 ), Pipe |> Game.newBuilding Nothing 0 )
-            , ( ( 21, 13 ), Pipe |> Game.newBuilding Nothing 0 )
-            , ( ( 22, 13 ), Pipe |> Game.newBuilding Nothing 0 )
-            , ( ( 23, 13 ), Container Empty |> Game.newBuilding Nothing 0 )
+            , ( ( 19, 13 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 20, 13 ), Pipe |> Game.newBuilding False 0 )
+            , ( ( 21, 13 ), Pipe |> Game.newBuilding False 0 )
+            , ( ( 22, 13 ), Pipe |> Game.newBuilding False 0 )
+            , ( ( 23, 13 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 18, 12 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 23, 12 ), Container Empty |> Game.newBuilding Nothing 0 )
+            , ( ( 18, 12 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 23, 12 ), Container Empty |> Game.newBuilding False 0 )
             ]
 
         3 ->
-            [ ( ( 20, 14 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 21, 14 ), Pipe |> Game.newBuilding Nothing 0 )
-            , ( ( 22, 14 ), Container Empty |> Game.newBuilding Nothing Data.mineVolume )
-            , ( ( 23, 14 ), Merger |> Game.newBuilding Nothing 0 )
-            , ( ( 23, 12 ), Container Empty |> Game.newBuilding Nothing 0 )
+            [ ( ( 20, 14 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 21, 14 ), Pipe |> Game.newBuilding False 0 )
+            , ( ( 22, 14 ), Container Empty |> Game.newBuilding False Data.mineVolume )
+            , ( ( 23, 14 ), Merger |> Game.newBuilding False 0 )
+            , ( ( 23, 12 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 20, 16 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 21, 16 ), Pipe |> Game.newBuilding Nothing 0 )
-            , ( ( 22, 16 ), Container Empty |> Game.newBuilding Nothing 0 )
-            , ( ( 23, 16 ), Merger |> Game.newBuilding Nothing 0 )
-            , ( ( 23, 17 ), Pipe |> Game.newBuilding Nothing 0 )
-            , ( ( 23, 18 ), Container Empty |> Game.newBuilding Nothing 0 )
+            , ( ( 20, 16 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 21, 16 ), Pipe |> Game.newBuilding False 0 )
+            , ( ( 22, 16 ), Container Empty |> Game.newBuilding False 0 )
+            , ( ( 23, 16 ), Merger |> Game.newBuilding False 0 )
+            , ( ( 23, 17 ), Pipe |> Game.newBuilding False 0 )
+            , ( ( 23, 18 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 19, 20 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 20, 20 ), Pipe |> Game.newBuilding Nothing 0 )
-            , ( ( 21, 20 ), Container Empty |> Game.newBuilding Nothing 0 )
-            , ( ( 22, 20 ), Merger |> Game.newBuilding Nothing 0 )
-            , ( ( 22, 19 ), Pipe |> Game.newBuilding Nothing 0 )
-            , ( ( 22, 18 ), Pipe |> Game.newBuilding Nothing 0 )
+            , ( ( 19, 20 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 20, 20 ), Pipe |> Game.newBuilding False 0 )
+            , ( ( 21, 20 ), Container Empty |> Game.newBuilding False 0 )
+            , ( ( 22, 20 ), Merger |> Game.newBuilding False 0 )
+            , ( ( 22, 19 ), Pipe |> Game.newBuilding False 0 )
+            , ( ( 22, 18 ), Pipe |> Game.newBuilding False 0 )
 
             --
-            , ( ( 18, 12 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 19, 12 ), Pipe |> Game.newBuilding Nothing 0 )
-            , ( ( 20, 12 ), Container Empty |> Game.newBuilding Nothing 0 )
-            , ( ( 22, 12 ), Pipe |> Game.newBuilding Nothing 0 )
+            , ( ( 18, 12 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 19, 12 ), Pipe |> Game.newBuilding False 0 )
+            , ( ( 20, 12 ), Container Empty |> Game.newBuilding False 0 )
+            , ( ( 22, 12 ), Pipe |> Game.newBuilding False 0 )
             ]
 
         4 ->
-            [ ( ( 18, 12 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 19, 13 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 20, 12 ), Container Empty |> Game.newBuilding Nothing 0 )
+            [ ( ( 18, 12 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 19, 13 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 20, 12 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 20, 15 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 21, 15 ), Pipe |> Game.newBuilding Nothing 0 )
-            , ( ( 23, 15 ), Container Empty |> Game.newBuilding Nothing 0 )
-            , ( ( 22, 14 ), Container Empty |> Game.newBuilding Nothing 0 )
+            , ( ( 20, 15 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 21, 15 ), Pipe |> Game.newBuilding False 0 )
+            , ( ( 23, 15 ), Container Empty |> Game.newBuilding False 0 )
+            , ( ( 22, 14 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 20, 20 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 19, 21 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 20, 21 ), Sorter |> Game.newBuilding Nothing 0 )
-            , ( ( 21, 21 ), Container Empty |> Game.newBuilding Nothing 0 )
+            , ( ( 20, 20 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 19, 21 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 20, 21 ), Sorter |> Game.newBuilding False 0 )
+            , ( ( 21, 21 ), Container Empty |> Game.newBuilding False 0 )
             ]
 
         _ ->

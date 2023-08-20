@@ -1,18 +1,17 @@
 module Building.Sorter exposing (canStore, update)
 
 import Building exposing (BuildingType(..))
-import Data.Item exposing (Item)
-import Data.Map exposing (Command, Neighborhood)
-import Lib.Command as Command
+import Data.Map exposing (Neighborhood)
+import Lib.Command exposing (SingleCommand(..))
 import Lib.Neighborhood as Neighborhood
 
 
-canStore : Neighborhood -> Item -> { value : Int, item : Item } -> Bool
-canStore _ _ _ =
+canStore : Neighborhood -> { value : Int } -> Bool
+canStore _ _ =
     False
 
 
-update : Neighborhood -> Command
+update : Neighborhood -> List SingleCommand
 update neigh =
     neigh
         |> Neighborhood.toList
@@ -20,12 +19,11 @@ update neigh =
             (\( dir, ( a, _ ) ) ->
                 case a of
                     Just Pipe ->
-                        Just <| Command.send dir
+                        Send dir |> Just
 
                     Just (Container _) ->
-                        Just <| Command.send dir
+                        Send dir |> Just
 
                     _ ->
                         Nothing
             )
-        |> Command.batch

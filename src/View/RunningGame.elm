@@ -5,11 +5,9 @@ import Color
 import Data exposing (floorCosts, fps, size, spriteSize)
 import Data.Comet as Comet exposing (Comet)
 import Data.Game as Game exposing (Game)
-import Data.Item exposing (Item(..))
 import Data.Map as Map exposing (GroundType(..), Map, Square)
 import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
 import Grid.Bordered as Grid exposing (Error(..))
-import Lib.Command as Command
 import Lib.Map exposing (SquareType(..))
 import Lib.Neighborhood as Neighborhood
 import Location exposing (Angle(..))
@@ -71,7 +69,7 @@ init { winCondition, map, seed } =
         game =
             { comet = comet
             , map = map
-            , bag = Nothing
+            , bag = False
             , debts = 0
             }
     in
@@ -111,13 +109,13 @@ timePassed ({ game, seed, winCondition } as model) =
                                             |> Neighborhood.map
                                                 (\maybe ->
                                                     ( maybe |> Maybe.andThen Game.getBuildingType
-                                                    , maybe |> Maybe.andThen Tuple.second
+                                                    , maybe |> Maybe.map Tuple.second |> Maybe.withDefault False
                                                     )
                                                 )
                                         )
 
                                 _ ->
-                                    Command.idle
+                                    []
                     , canStore =
                         \pos ->
                             case Neighborhood.fromPosition pos game.map of
@@ -129,13 +127,13 @@ timePassed ({ game, seed, winCondition } as model) =
                                                 |> Neighborhood.map
                                                     (\maybe ->
                                                         ( maybe |> Maybe.andThen Game.getBuildingType
-                                                        , maybe |> Maybe.andThen Tuple.second
+                                                        , maybe |> Maybe.map Tuple.second |> Maybe.withDefault False
                                                         )
                                                     )
                                             )
 
                                 _ ->
-                                    always <| always <| always <| False
+                                    \_ _ -> False
                     }
                 |> Tuple.mapSecond ((+) -game.debts)
 
@@ -200,7 +198,7 @@ placeSquare building position ({ game } as model) =
             case maybeSquare of
                 Just ( GroundSquare (Mountain { big }), _ ) ->
                     b
-                        |> Game.newBuilding (Just Stone)
+                        |> Game.newBuilding True
                             (if big then
                                 Data.mineVolume * 2
 
@@ -242,11 +240,11 @@ pickUpSquare position ({ gui, game } as model) =
                 game.map
                     |> Grid.get position
             of
-                Ok (Just ( square, Just item )) ->
+                Ok (Just ( square, True )) ->
                     { model
                         | game =
                             { game
-                                | bag = Just item
+                                | bag = True
                                 , map =
                                     game.map
                                         |> Grid.ignoringErrors
@@ -254,11 +252,11 @@ pickUpSquare position ({ gui, game } as model) =
                                                 (always <|
                                                     Ok <|
                                                         Just <|
-                                                            ( square, Nothing )
+                                                            ( square, False )
                                                 )
                                             )
                             }
-                        , gui = gui |> GUI.select (Bag <| Just <| item)
+                        , gui = gui |> GUI.select (Bag True)
                     }
 
                 _ ->
@@ -267,8 +265,8 @@ pickUpSquare position ({ gui, game } as model) =
     newModel
 
 
-insertItem : Item -> ( Int, Int ) -> Model -> Model
-insertItem item position ({ gui, game } as model) =
+insertItem : ( Int, Int ) -> Model -> Model
+insertItem position ({ gui, game } as model) =
     let
         newModel : Model
         newModel =
@@ -276,28 +274,24 @@ insertItem item position ({ gui, game } as model) =
                 game.map
                     |> Grid.get position
             of
-                Ok (Just ( BuildingSquare b, Just i )) ->
-                    if i == item then
-                        { model
-                            | game =
-                                { game
-                                    | bag = Nothing
-                                    , map =
-                                        game.map
-                                            |> Grid.ignoringErrors
-                                                (Grid.update position
-                                                    (always <|
-                                                        Ok <|
-                                                            Just <|
-                                                                ( BuildingSquare { b | value = b.value + 1 }, Just i )
-                                                    )
+                Ok (Just ( BuildingSquare b, True )) ->
+                    { model
+                        | game =
+                            { game
+                                | bag = False
+                                , map =
+                                    game.map
+                                        |> Grid.ignoringErrors
+                                            (Grid.update position
+                                                (always <|
+                                                    Ok <|
+                                                        Just <|
+                                                            ( BuildingSquare { b | value = b.value + 1 }, True )
                                                 )
-                                }
-                            , gui = gui |> GUI.select (Bag <| Nothing)
-                        }
-
-                    else
-                        model
+                                            )
+                            }
+                        , gui = gui |> GUI.select (Bag False)
+                    }
 
                 _ ->
                     model
@@ -320,7 +314,7 @@ squareClicked position ({ gui, game } as model) =
                         | map =
                             game.map
                                 |> Grid.ignoringErrors
-                                    (Grid.insert position ( GroundSquare Dirt, Nothing ))
+                                    (Grid.insert position ( GroundSquare Dirt, False ))
                         , debts =
                             game.debts + floorCosts
                     }
@@ -330,11 +324,11 @@ squareClicked position ({ gui, game } as model) =
         ToolSelection.Delete ->
             deleteSqaure position model
 
-        ToolSelection.Bag Nothing ->
+        ToolSelection.Bag False ->
             pickUpSquare position model
 
-        ToolSelection.Bag (Just item) ->
-            insertItem item position model
+        ToolSelection.Bag True ->
+            insertItem position model
 
         ToolSelection.Mine ->
             Building.Mine |> build

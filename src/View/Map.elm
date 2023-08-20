@@ -1,8 +1,7 @@
-module View.Map exposing (view, viewItem, viewSquareType)
+module View.Map exposing (view, viewSquareType)
 
 import Building exposing (BuildingType(..))
 import Data.Game as Game
-import Data.Item exposing (Item(..))
 import Data.Map as Map exposing (GroundType(..), Map, Square)
 import Data.ToolSelection exposing (ToolSelection(..))
 import Grid.Bordered as Grid
@@ -47,13 +46,6 @@ viewSquareType squareType =
                     Tileset.sorter
 
 
-viewItem : Item -> Tile msg
-viewItem item =
-    case item of
-        Stone ->
-            Tileset.stone
-
-
 viewSquare :
     { position : ( Int, Int )
     , onClick : ( Int, Int ) -> msg
@@ -65,7 +57,11 @@ viewSquare { position, onClick, valid } ( squareType, maybeItem ) =
     let
         item : Maybe (Tile msg)
         item =
-            maybeItem |> Maybe.map viewItem
+            if maybeItem then
+                Just Tileset.stone
+
+            else
+                Nothing
     in
     (case item of
         Just tile ->
