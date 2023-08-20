@@ -1,10 +1,8 @@
 module View.Tileset exposing
     ( background
     , bigMountain
-    , coloredConveyorBelt
     , comet
     , container
-    , conveyorBelt
     , font
     , ground
     , itemBackground
@@ -12,17 +10,16 @@ module View.Tileset exposing
     , mine
     , mountain
     , oreGround
+    , pipe
     , sorter
     , stone
     , tileset
     , valid
     )
 
-import Building exposing (Code(..), Volume(..))
-import Data.ToolSelection exposing (BeltColor(..))
+import Building exposing (Volume(..))
 import Direction exposing (Direction(..))
 import PixelEngine.Tile as Tile exposing (Tile, Tileset)
-import Position
 
 
 font : Tileset
@@ -86,76 +83,9 @@ mine =
         |> Tile.animated 4
 
 
-conveyorBelt : Code -> Tile msg
-conveyorBelt code =
-    case code of
-        Invalid ->
-            Tile.fromPosition ( 0, 2 )
-
-        InputFound ->
-            Tile.fromPosition ( 1, 2 )
-
-        Try Blue ->
-            Tile.fromPosition ( 4, 6 )
-
-        Try Green ->
-            Tile.fromPosition ( 5, 6 )
-
-        Try Red ->
-            Tile.fromPosition ( 6, 6 )
-
-        Try Yellow ->
-            Tile.fromPosition ( 7, 6 )
-
-        Failed Blue ->
-            Tile.fromPosition ( 4, 7 )
-
-        Failed Green ->
-            Tile.fromPosition ( 5, 7 )
-
-        Failed Red ->
-            Tile.fromPosition ( 6, 7 )
-
-        Failed Yellow ->
-            Tile.fromPosition ( 7, 7 )
-
-
-coloredConveyorBelt : BeltColor -> Direction -> Tile msg
-coloredConveyorBelt color dir =
-    let
-        getCoords : { x : Int, y : Int }
-        getCoords =
-            case dir of
-                Right ->
-                    { x = 0, y = 0 }
-
-                Down ->
-                    { x = 1, y = 0 }
-
-                Up ->
-                    { x = 2, y = 0 }
-
-                Left ->
-                    { x = 3, y = 0 }
-
-        pos : ( Int, Int )
-        pos =
-            case color of
-                Blue ->
-                    ( 0, 4 )
-
-                Green ->
-                    ( 0, 5 )
-
-                Red ->
-                    ( 0, 6 )
-
-                Yellow ->
-                    ( 0, 7 )
-    in
-    pos
-        |> Position.add getCoords
-        |> Tile.fromPosition
+pipe : Tile msg
+pipe =
+    Tile.fromPosition ( 4, 6 )
 
 
 container : Volume -> Tile msg

@@ -1,9 +1,7 @@
 module Data.Game exposing (Game, emptySquare, getBuildingType, getGroundType, isBuildingType, isGroundType, isValid, newBuilding, solveConflict, updateBuilding)
 
 import Building exposing (BuildingType(..), Volume(..))
-import Building.ColoredConveyorBelt as ColoredConveyorBelt
 import Building.Container as Container
-import Building.ConveyorBelt as ConveyorBelt
 import Building.Merger as Merger
 import Building.Mine as Mine
 import Building.Pipe as Pipe
@@ -28,12 +26,6 @@ type alias Game =
 solveConflict : BuildingType -> Neighborhood -> Item -> { item : Item, value : Int } -> Bool
 solveConflict sort neigh =
     case sort of
-        Building.ColoredConveyorBelt _ _ ->
-            ColoredConveyorBelt.canStore neigh
-
-        Building.ConveyorBelt _ ->
-            ConveyorBelt.canStore neigh
-
         Building.Pipe ->
             Pipe.canStore neigh
 
@@ -53,12 +45,6 @@ solveConflict sort neigh =
 updateBuilding : BuildingType -> ({ value : Int, item : Maybe Item } -> Neighborhood -> Map.Command)
 updateBuilding sort =
     case sort of
-        Building.ColoredConveyorBelt color dir ->
-            always <| ColoredConveyorBelt.update color dir
-
-        Building.ConveyorBelt code ->
-            always <| ConveyorBelt.update code
-
         Building.Pipe ->
             \_ -> Pipe.update
 

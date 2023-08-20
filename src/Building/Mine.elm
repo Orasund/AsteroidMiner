@@ -23,13 +23,6 @@ update { value } neigh =
             |> List.filterMap
                 (\( dir, ( a, _ ) ) ->
                     case a of
-                        Just (ColoredConveyorBelt _ d) ->
-                            if dir == d then
-                                Just <| Command.send dir
-
-                            else
-                                Nothing
-
                         Just Pipe ->
                             Just <| Command.send dir
 

@@ -1,7 +1,7 @@
 module Page.Tutorial exposing (Model, Msg, init, subscriptions, update, view)
 
 import Action exposing (Action)
-import Building exposing (BuildingType(..), Code(..), Volume(..))
+import Building exposing (BuildingType(..), Volume(..))
 import Color
 import Data exposing (size, spriteSize)
 import Data.Game as Game
@@ -14,7 +14,7 @@ import Layout
 import Lib.Map exposing (SquareType(..))
 import PixelEngine exposing (Area)
 import PixelEngine.Image as Image
-import PixelEngine.Options as Options exposing (Options, Transition)
+import PixelEngine.Options exposing (Options)
 import PixelEngine.Tile as Tile exposing (Tile)
 import Random exposing (Seed)
 import View
@@ -51,23 +51,23 @@ tutorial num map =
             , ( ( 22, 20 ), Container Empty |> Game.newBuilding Nothing 0 )
 
             --
-            , ( ( 21, 18 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 21, 18 ), Pipe |> Game.newBuilding Nothing 0 )
             , ( ( 22, 18 ), Container Empty |> Game.newBuilding Nothing 0 )
 
             --
-            , ( ( 21, 16 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 21, 16 ), Pipe |> Game.newBuilding Nothing 0 )
             , ( ( 20, 16 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
 
             --
             , ( ( 20, 14 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 21, 14 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 21, 14 ), Pipe |> Game.newBuilding Nothing 0 )
             , ( ( 22, 14 ), Container Empty |> Game.newBuilding Nothing 0 )
             ]
 
         2 ->
             [ ( ( 20, 16 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 21, 16 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
-            , ( ( 22, 16 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 21, 16 ), Pipe |> Game.newBuilding Nothing 0 )
+            , ( ( 22, 16 ), Pipe |> Game.newBuilding Nothing 0 )
             , ( ( 23, 16 ), Container Empty |> Game.newBuilding Nothing 0 )
 
             --
@@ -80,9 +80,9 @@ tutorial num map =
 
             --
             , ( ( 19, 13 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 20, 13 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
-            , ( ( 21, 13 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
-            , ( ( 22, 13 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 20, 13 ), Pipe |> Game.newBuilding Nothing 0 )
+            , ( ( 21, 13 ), Pipe |> Game.newBuilding Nothing 0 )
+            , ( ( 22, 13 ), Pipe |> Game.newBuilding Nothing 0 )
             , ( ( 23, 13 ), Container Empty |> Game.newBuilding Nothing 0 )
 
             --
@@ -92,32 +92,32 @@ tutorial num map =
 
         3 ->
             [ ( ( 20, 14 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 21, 14 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 21, 14 ), Pipe |> Game.newBuilding Nothing 0 )
             , ( ( 22, 14 ), Container Empty |> Game.newBuilding Nothing Data.mineVolume )
             , ( ( 23, 14 ), Merger |> Game.newBuilding Nothing 0 )
             , ( ( 23, 12 ), Container Empty |> Game.newBuilding Nothing 0 )
 
             --
             , ( ( 20, 16 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 21, 16 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 21, 16 ), Pipe |> Game.newBuilding Nothing 0 )
             , ( ( 22, 16 ), Container Empty |> Game.newBuilding Nothing 0 )
             , ( ( 23, 16 ), Merger |> Game.newBuilding Nothing 0 )
-            , ( ( 23, 17 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 23, 17 ), Pipe |> Game.newBuilding Nothing 0 )
             , ( ( 23, 18 ), Container Empty |> Game.newBuilding Nothing 0 )
 
             --
             , ( ( 19, 20 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 20, 20 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 20, 20 ), Pipe |> Game.newBuilding Nothing 0 )
             , ( ( 21, 20 ), Container Empty |> Game.newBuilding Nothing 0 )
             , ( ( 22, 20 ), Merger |> Game.newBuilding Nothing 0 )
-            , ( ( 22, 19 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
-            , ( ( 22, 18 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 22, 19 ), Pipe |> Game.newBuilding Nothing 0 )
+            , ( ( 22, 18 ), Pipe |> Game.newBuilding Nothing 0 )
 
             --
             , ( ( 18, 12 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 19, 12 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 19, 12 ), Pipe |> Game.newBuilding Nothing 0 )
             , ( ( 20, 12 ), Container Empty |> Game.newBuilding Nothing 0 )
-            , ( ( 22, 12 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 22, 12 ), Pipe |> Game.newBuilding Nothing 0 )
             ]
 
         4 ->
@@ -127,7 +127,7 @@ tutorial num map =
 
             --
             , ( ( 20, 15 ), Mine |> Game.newBuilding (Just Stone) Data.mineVolume )
-            , ( ( 21, 15 ), ConveyorBelt Invalid |> Game.newBuilding Nothing 0 )
+            , ( ( 21, 15 ), Pipe |> Game.newBuilding Nothing 0 )
             , ( ( 23, 15 ), Container Empty |> Game.newBuilding Nothing 0 )
             , ( ( 22, 14 ), Container Empty |> Game.newBuilding Nothing 0 )
 

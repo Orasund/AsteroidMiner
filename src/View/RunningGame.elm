@@ -1,6 +1,6 @@
 module View.RunningGame exposing (Model, Msg(..), Status(..), areas, gameArea, guiArea, init, subscriptions, update)
 
-import Building exposing (BuildingType(..), Code(..), Volume(..))
+import Building exposing (BuildingType(..), Volume(..))
 import Color
 import Data exposing (floorCosts, fps, size, spriteSize)
 import Data.Comet as Comet exposing (Comet)
@@ -338,9 +338,6 @@ squareClicked position ({ gui, game } as model) =
 
         ToolSelection.Mine ->
             Building.Mine |> build
-
-        ToolSelection.ConveyorBelt color ->
-            Building.ConveyorBelt (Try color) |> build
 
         ToolSelection.Pipe ->
             Building.Pipe |> build

@@ -1,10 +1,10 @@
 module View.Map exposing (view, viewItem, viewSquareType)
 
-import Building exposing (BuildingType(..), Code(..))
+import Building exposing (BuildingType(..))
 import Data.Game as Game
 import Data.Item exposing (Item(..))
 import Data.Map as Map exposing (GroundType(..), Map, Square)
-import Data.ToolSelection exposing (BeltColor(..), ToolSelection(..))
+import Data.ToolSelection exposing (ToolSelection(..))
 import Grid.Bordered as Grid
 import Lib.Map exposing (SquareType(..))
 import PixelEngine.Tile as Tile exposing (Tile)
@@ -34,14 +34,8 @@ viewSquareType squareType =
                 Building.Mine ->
                     Tileset.mine
 
-                Building.ConveyorBelt code ->
-                    Tileset.conveyorBelt code
-
-                Building.ColoredConveyorBelt color direction ->
-                    Tileset.coloredConveyorBelt color direction
-
                 Building.Pipe ->
-                    Tileset.conveyorBelt (Try Blue)
+                    Tileset.pipe
 
                 Building.Container volume ->
                     Tileset.container volume

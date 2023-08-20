@@ -2,7 +2,7 @@ module View.GUI exposing (Model, Msg, init, select, toDefault, update, view)
 
 import Data exposing (floorCosts, maxValue, mineVolume, size, spriteSize)
 import Data.Item exposing (Item)
-import Data.ToolSelection as ToolSelection exposing (BeltColor(..), ToolSelection(..))
+import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
 import Location exposing (Location)
 import PixelEngine.Image as Image exposing (Image)
 import View
@@ -78,9 +78,6 @@ viewBlueprint selected blueprint =
                 ToolSelection.Mine ->
                     Tileset.mine
 
-                ToolSelection.ConveyorBelt _ ->
-                    Tileset.conveyorBelt
-
                 ToolSelection.Pipe ->
                     Tileset.conveyorBelt
 
@@ -120,18 +117,6 @@ viewDesc selected =
             case selected of
                 ToolSelection.Mine ->
                     "Mine - Mines " ++ String.fromInt mineVolume ++ " items"
-
-                ToolSelection.ConveyorBelt Red ->
-                    "Conveyor Belt (Red) - Transports items"
-
-                ToolSelection.ConveyorBelt Blue ->
-                    "Conveyor Belt (Blue) - Transports items"
-
-                ToolSelection.ConveyorBelt Green ->
-                    "Conveyor Belt (Green) - Transports items"
-
-                ToolSelection.ConveyorBelt Yellow ->
-                    "Conveyor Belt (Yellow) - Transports items"
 
                 ToolSelection.Pipe ->
                     "Pipe - Transports items"

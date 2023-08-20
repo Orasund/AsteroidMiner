@@ -1,7 +1,6 @@
-module Building exposing (Building, BuildingType(..), Code(..), Volume(..), canBreak, isColoredConveyorBelt, isConveyorBelt, isConveyorBeltColored, isInput, isOutput)
+module Building exposing (Building, BuildingType(..), Volume(..), canBreak, isInput, isOutput)
 
-import Data.ToolSelection exposing (BeltColor(..), ToolSelection(..))
-import Direction exposing (Direction)
+import Data.ToolSelection exposing (ToolSelection(..))
 
 
 type alias Building a =
@@ -17,17 +16,8 @@ type Volume
     | Full
 
 
-type Code
-    = Invalid
-    | InputFound
-    | Try BeltColor
-    | Failed BeltColor
-
-
 type BuildingType
     = Mine
-    | ConveyorBelt Code
-    | ColoredConveyorBelt BeltColor Direction
     | Pipe
     | Container Volume
     | Merger
@@ -74,33 +64,3 @@ canBreak sort =
 
         _ ->
             True
-
-
-isConveyorBelt : BuildingType -> Bool
-isConveyorBelt sort =
-    case sort of
-        ConveyorBelt _ ->
-            True
-
-        _ ->
-            False
-
-
-isColoredConveyorBelt : BuildingType -> Bool
-isColoredConveyorBelt sort =
-    case sort of
-        ColoredConveyorBelt _ _ ->
-            True
-
-        _ ->
-            False
-
-
-isConveyorBeltColored : BeltColor -> BuildingType -> Bool
-isConveyorBeltColored color sort =
-    case sort of
-        ColoredConveyorBelt c _ ->
-            c == color
-
-        _ ->
-            False
