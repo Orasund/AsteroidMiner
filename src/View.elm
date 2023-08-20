@@ -1,20 +1,8 @@
 module View exposing (..)
 
-import Data.Item exposing (Item)
 import Html exposing (Attribute, Html)
 import Html.Attributes
 import Layout
-
-
-type ToolSelection
-    = Mine
-    | ConveyorBelt
-    | Container
-    | Merger
-    | Sorter
-    | Floor
-    | Delete
-    | Bag (Maybe Item)
 
 
 stylesheet : Html msg

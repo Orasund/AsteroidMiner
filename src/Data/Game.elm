@@ -7,13 +7,13 @@ import Building.ConveyorBelt as ConveyorBelt
 import Building.Merger as Merger
 import Building.Mine as Mine
 import Building.Sorter as Sorter
-import Data exposing (mineVolume)
+import Data
 import Data.Comet exposing (Comet)
 import Data.Item exposing (Item)
 import Data.Map as Map exposing (GroundType(..), Map, Neighborhood, Square)
+import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
 import Lib.Map as Map exposing (SquareType(..))
 import Lib.Neighborhood as Neighborhood
-import View exposing (ToolSelection)
 
 
 type alias Game =
@@ -27,44 +27,44 @@ type alias Game =
 solveConflict : BuildingType -> Neighborhood -> Item -> { item : Item, value : Int } -> Bool
 solveConflict sort neigh =
     case sort of
-        ColoredConveyorBelt _ _ ->
+        Building.ColoredConveyorBelt _ _ ->
             ColoredConveyorBelt.canStore neigh
 
-        ConveyorBelt _ ->
+        Building.ConveyorBelt _ ->
             ConveyorBelt.canStore neigh
 
-        Mine ->
+        Building.Mine ->
             Mine.canStore neigh
 
-        Container _ ->
+        Building.Container _ ->
             Container.canStore neigh
 
-        Merger ->
+        Building.Merger ->
             Merger.canStore neigh
 
-        Sorter ->
+        Building.Sorter ->
             Sorter.canStore neigh
 
 
 updateBuilding : BuildingType -> ({ value : Int, item : Maybe Item } -> Neighborhood -> Map.Command)
 updateBuilding sort =
     case sort of
-        ColoredConveyorBelt color dir ->
+        Building.ColoredConveyorBelt color dir ->
             always <| ColoredConveyorBelt.update color dir
 
-        ConveyorBelt code ->
+        Building.ConveyorBelt code ->
             always <| ConveyorBelt.update code
 
-        Mine ->
+        Building.Mine ->
             Mine.update
 
-        Container bool ->
+        Building.Container bool ->
             Container.update bool
 
-        Merger ->
+        Building.Merger ->
             always <| Merger.update
 
-        Sorter ->
+        Building.Sorter ->
             always <| Sorter.update
 
 
@@ -134,37 +134,37 @@ isValid selected position map =
     case map |> Neighborhood.fromPosition position of
         Ok ( Just square, neigh ) ->
             case ( selected, square ) of
-                ( View.Floor, _ ) ->
+                ( ToolSelection.Floor, _ ) ->
                     False
 
-                ( View.Delete, ( GroundSquare _, _ ) ) ->
+                ( ToolSelection.Delete, ( GroundSquare _, _ ) ) ->
                     False
 
-                ( View.Bag Nothing, ( GroundSquare _, Just _ ) ) ->
+                ( ToolSelection.Bag Nothing, ( GroundSquare _, Just _ ) ) ->
                     True
 
-                ( View.Bag Nothing, ( GroundSquare _, Nothing ) ) ->
+                ( ToolSelection.Bag Nothing, ( GroundSquare _, Nothing ) ) ->
                     False
 
-                ( View.Bag (Just _), ( GroundSquare _, _ ) ) ->
+                ( ToolSelection.Bag (Just _), ( GroundSquare _, _ ) ) ->
                     False
 
-                ( View.Mine, ( GroundSquare Dirt, _ ) ) ->
+                ( ToolSelection.Mine, ( GroundSquare Dirt, _ ) ) ->
                     False
 
                 ( _, ( GroundSquare Dirt, _ ) ) ->
                     True
 
-                ( View.Mine, ( GroundSquare (Mountain _), _ ) ) ->
+                ( ToolSelection.Mine, ( GroundSquare (Mountain _), _ ) ) ->
                     neigh |> isValidMinePos
 
                 ( _, ( GroundSquare (Mountain _), _ ) ) ->
                     False
 
-                ( View.Delete, ( BuildingSquare { sort }, _ ) ) ->
+                ( ToolSelection.Delete, ( BuildingSquare { sort }, _ ) ) ->
                     sort |> Building.canBreak
 
-                ( View.Bag (Just a), ( BuildingSquare { sort, value }, Just b ) ) ->
+                ( ToolSelection.Bag (Just a), ( BuildingSquare { sort, value }, Just b ) ) ->
                     if solveConflict sort (neigh |> Neighborhood.map (Maybe.andThen getBuildingType)) a { item = b, value = value } then
                         sort |> Building.isInput
 
@@ -175,7 +175,7 @@ isValid selected position map =
                     False
 
         Ok ( Nothing, neigh ) ->
-            (selected == View.Floor)
+            (selected == ToolSelection.Floor)
                 && (neigh
                         |> Neighborhood.toList
                         |> List.any (Tuple.second >> (/=) Nothing)

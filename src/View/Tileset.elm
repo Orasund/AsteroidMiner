@@ -18,7 +18,8 @@ module View.Tileset exposing
     , valid
     )
 
-import Building exposing (BeltColor(..), Code(..), Volume(..))
+import Building exposing (Code(..), Volume(..))
+import Data.ToolSelection exposing (BeltColor(..))
 import Direction exposing (Direction(..))
 import PixelEngine.Tile as Tile exposing (Tile, Tileset)
 import Position

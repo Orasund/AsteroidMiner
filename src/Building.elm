@@ -1,20 +1,13 @@
-module Building exposing (BeltColor(..), Building, BuildingType(..), Code(..), Volume(..), canBreak, isColoredConveyorBelt, isConveyorBelt, isConveyorBeltColored, isInput, isOutput)
+module Building exposing (Building, BuildingType(..), Code(..), Volume(..), canBreak, isColoredConveyorBelt, isConveyorBelt, isConveyorBeltColored, isInput, isOutput)
 
+import Data.ToolSelection exposing (BeltColor(..), ToolSelection(..))
 import Direction exposing (Direction)
-import View exposing (ToolSelection(..))
 
 
 type alias Building a =
     { value : Int
     , sort : a
     }
-
-
-type BeltColor
-    = Red
-    | Blue
-    | Green
-    | Yellow
 
 
 type Volume

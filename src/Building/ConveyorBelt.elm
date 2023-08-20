@@ -1,8 +1,9 @@
 module Building.ConveyorBelt exposing (canStore, update)
 
-import Building exposing (BeltColor(..), BuildingType(..), Code(..))
+import Building exposing (BuildingType(..), Code(..))
 import Data.Item exposing (Item)
 import Data.Map exposing (Command, Neighborhood)
+import Data.ToolSelection exposing (BeltColor(..))
 import Direction exposing (Direction(..))
 import Lib.Command exposing (idle, transition)
 import Lib.Map exposing (SquareType(..))

@@ -2,9 +2,10 @@ module View.GUI exposing (Model, Msg, init, select, toDefault, update, view)
 
 import Data exposing (floorCosts, maxValue, mineVolume, size, spriteSize)
 import Data.Item exposing (Item)
+import Data.ToolSelection as ToolSelection exposing (BeltColor(..), ToolSelection(..))
 import Location exposing (Location)
 import PixelEngine.Image as Image exposing (Image)
-import View exposing (ToolSelection(..))
+import View
 import View.Inventory as Inventory
 import View.Map as Map
 import View.Tileset exposing (font)
@@ -74,30 +75,30 @@ viewBlueprint selected blueprint =
     let
         { image, symobl } =
             case blueprint of
-                Mine ->
+                ToolSelection.Mine ->
                     Tileset.mine
 
-                ConveyorBelt ->
+                ToolSelection.ConveyorBelt _ ->
                     Tileset.conveyorBelt
 
-                Container ->
+                ToolSelection.Container ->
                     Tileset.container
 
-                Delete ->
+                ToolSelection.Delete ->
                     Tileset.delete
 
-                Bag bag ->
+                ToolSelection.Bag bag ->
                     bag
                         |> Maybe.map Map.viewItem
                         |> Tileset.pickUp
 
-                Merger ->
+                ToolSelection.Merger ->
                     Tileset.merger
 
-                Sorter ->
+                ToolSelection.Sorter ->
                     Tileset.sorter
 
-                Floor ->
+                ToolSelection.Floor ->
                     Tileset.floor
     in
     if blueprint == selected then
@@ -114,28 +115,37 @@ viewDesc selected =
         text : String
         text =
             case selected of
-                Mine ->
+                ToolSelection.Mine ->
                     "Mine - Mines " ++ String.fromInt mineVolume ++ " items"
 
-                ConveyorBelt ->
-                    "Conveyor Belt - Transports items"
+                ToolSelection.ConveyorBelt Red ->
+                    "Conveyor Belt (Red) - Transports items"
 
-                Container ->
+                ToolSelection.ConveyorBelt Blue ->
+                    "Conveyor Belt (Blue) - Transports items"
+
+                ToolSelection.ConveyorBelt Green ->
+                    "Conveyor Belt (Green) - Transports items"
+
+                ToolSelection.ConveyorBelt Yellow ->
+                    "Conveyor Belt (Yellow) - Transports items"
+
+                ToolSelection.Container ->
                     "Container - Stores " ++ String.fromInt maxValue ++ " items"
 
-                Delete ->
+                ToolSelection.Delete ->
                     "DELETE BUILDINGS"
 
-                Bag _ ->
+                ToolSelection.Bag _ ->
                     "PICK UP ITEMS"
 
-                Merger ->
+                ToolSelection.Merger ->
                     "Merger - Takes from containers"
 
-                Sorter ->
+                ToolSelection.Sorter ->
                     "Sorter - Sorts into containers"
 
-                Floor ->
+                ToolSelection.Floor ->
                     "Floor - Costs " ++ String.fromInt floorCosts ++ " items"
     in
     [ ( ( 0, (toFloat <| 2) * spriteSize ), Image.fromText text font ) ]
@@ -146,7 +156,8 @@ view bag inventory { selected } =
     List.concat
         [ [ Bag bag
           , Mine
-          , ConveyorBelt
+          , ConveyorBelt Red
+          , ConveyorBelt Blue
           , Container
           , Merger
           , Sorter

@@ -7,6 +7,7 @@ import Data.Comet as Comet exposing (Comet)
 import Data.Game as Game exposing (Game)
 import Data.Item exposing (Item(..))
 import Data.Map as Map exposing (GroundType(..), Map, Square)
+import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
 import Grid.Bordered as Grid exposing (Error(..))
 import Lib.Command as Command
 import Lib.Map exposing (SquareType(..))
@@ -14,10 +15,8 @@ import Lib.Neighborhood as Neighborhood
 import Location exposing (Angle(..))
 import PixelEngine exposing (Area)
 import PixelEngine.Tile exposing (Tile)
-import Position
 import Random exposing (Seed)
 import Time
-import View exposing (ToolSelection(..))
 import View.GUI as GUI
 import View.Map as Map
 import View.Tileset as Tileset exposing (tileset)
@@ -320,31 +319,31 @@ squareClicked position ({ gui, game } as model) =
             }
     in
     case gui.selected of
-        View.Delete ->
+        ToolSelection.Delete ->
             deleteSqaure position model
 
-        View.Bag Nothing ->
+        ToolSelection.Bag Nothing ->
             pickUpSquare position model
 
-        View.Bag (Just item) ->
+        ToolSelection.Bag (Just item) ->
             insertItem item position model
 
-        View.Mine ->
+        ToolSelection.Mine ->
             Building.Mine |> build
 
-        View.ConveyorBelt ->
-            Building.ConveyorBelt Invalid |> build
+        ToolSelection.ConveyorBelt color ->
+            Building.ConveyorBelt (Try color) |> build
 
-        View.Container ->
+        ToolSelection.Container ->
             Building.Container Empty |> build
 
-        View.Merger ->
+        ToolSelection.Merger ->
             Building.Merger |> build
 
-        View.Sorter ->
+        ToolSelection.Sorter ->
             Building.Sorter |> build
 
-        View.Floor ->
+        ToolSelection.Floor ->
             placeFloor
 
 

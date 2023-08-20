@@ -1,13 +1,13 @@
 module View.Map exposing (view, viewItem, viewSquareType)
 
-import Building exposing (BeltColor(..), BuildingType(..))
+import Building exposing (BuildingType(..))
 import Data.Game as Game
 import Data.Item exposing (Item(..))
 import Data.Map as Map exposing (GroundType(..), Map, Square)
+import Data.ToolSelection exposing (BeltColor(..), ToolSelection(..))
 import Grid.Bordered as Grid
 import Lib.Map exposing (SquareType(..))
 import PixelEngine.Tile as Tile exposing (Tile)
-import View exposing (ToolSelection(..))
 import View.Tileset as Tileset
 
 
