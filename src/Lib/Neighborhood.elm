@@ -9,7 +9,7 @@ type alias Neighborhood a =
     List ( Direction, a )
 
 
-fromPosition : ( Int, Int ) -> Grid a -> ( Maybe a, Neighborhood (Maybe a) )
+fromPosition : ( Int, Int ) -> Grid a -> ( Maybe a, List ( Direction, Maybe a ) )
 fromPosition pos grid =
     let
         get : Direction -> Maybe a

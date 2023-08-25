@@ -143,7 +143,6 @@ view inventory { selected } =
           , Pipe
           , Container
           , Merger
-          , Sorter
           , Floor
           , Delete
           ]

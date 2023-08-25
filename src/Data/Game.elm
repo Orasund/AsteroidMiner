@@ -123,7 +123,21 @@ isValid selected position map =
                     True
 
                 ( ToolSelection.Mine, ( GroundSquare (Mountain _), _ ) ) ->
-                    True
+                    map
+                        |> Neighborhood.fromPosition position
+                        |> Tuple.second
+                        |> List.any
+                            (\( _, maybe ) ->
+                                case maybe of
+                                    Just ( GroundSquare (Mountain _), _ ) ->
+                                        False
+
+                                    Nothing ->
+                                        False
+
+                                    _ ->
+                                        True
+                            )
 
                 ( _, ( GroundSquare (Mountain _), _ ) ) ->
                     False

@@ -62,7 +62,10 @@ init { winCondition, map, seed } =
 
         comet : Comet
         comet =
-            Comet.new angle
+            Comet.new
+                { angle = angle
+                , moveClockwise = True
+                }
 
         game : Game
         game =
@@ -99,7 +102,7 @@ timePassed ({ game, seed, winCondition } as model) =
                     , update =
                         \pos ->
                             case Neighborhood.fromPosition pos game.map of
-                                Ok ( Just ( BuildingSquare { value, sort }, maybeItem ), neigh ) ->
+                                ( Just ( BuildingSquare { value, sort }, maybeItem ), neigh ) ->
                                     Game.updateBuilding
                                         sort
                                         { value = value, item = maybeItem }
@@ -119,7 +122,7 @@ timePassed ({ game, seed, winCondition } as model) =
                     , canStore =
                         \pos ->
                             case Neighborhood.fromPosition pos game.map of
-                                Ok ( Just ( BuildingSquare { sort }, _ ), neigh ) ->
+                                ( Just ( BuildingSquare { sort }, _ ), neigh ) ->
                                     always <|
                                         Game.solveConflict
                                             sort
@@ -219,7 +222,7 @@ placeSquare building position ({ game } as model) =
                     Err ()
     in
     case game.map |> Neighborhood.fromPosition position of
-        Ok ( Just _, _ ) ->
+        ( Just _, _ ) ->
             case game.map |> Grid.update position (updateSquare building) of
                 Ok m ->
                     { model

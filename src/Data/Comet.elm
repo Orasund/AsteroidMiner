@@ -11,25 +11,35 @@ import Random exposing (Generator)
 type alias Comet =
     { life : Int
     , offset : Angle
+    , slope : Float
     }
 
 
-new : Angle -> Comet
-new angle =
+new : { angle : Angle, moveClockwise : Bool } -> Comet
+new args =
     { life = framesPerComet
-    , offset = angle
+    , offset = args.angle
+    , slope =
+        if args.moveClockwise then
+            -1
+
+        else
+            1
     }
 
 
 {-| Conchosprial
 <https://en.wikipedia.org/wiki/Conchospiral>
 -}
-asteroidCoord : Int -> Angle -> { x : Int, y : Int }
-asteroidCoord cyclesUntilComet (Angle offset) =
+asteroidCoord : { t : Int, angle : Angle, slope : Float } -> { x : Int, y : Int }
+asteroidCoord args =
     let
+        (Angle offset) =
+            args.angle
+
         t : Float
         t =
-            toFloat <| cyclesUntilComet
+            toFloat <| args.t
 
         maximalCycles : Float
         maximalCycles =
@@ -48,7 +58,7 @@ asteroidCoord cyclesUntilComet (Angle offset) =
         --Slope
         c : Float
         c =
-            1
+            args.slope
 
         --opening Angle
         --we need angle = logBase mu (c*framesPerComet)= 2*pi*maximalCycles
@@ -107,14 +117,20 @@ asteroidCoord cyclesUntilComet (Angle offset) =
 
 
 position : Comet -> ( Int, Int )
-position { offset, life } =
+position comet =
     let
         center : Int
         center =
             size // 2
     in
     ( center, center )
-        |> Position.add (asteroidCoord life offset)
+        |> Position.add
+            (asteroidCoord
+                { t = comet.life
+                , angle = comet.offset
+                , slope = comet.slope
+                }
+            )
 
 
 update : Map -> Comet -> Generator ( Comet, Map )
@@ -146,13 +162,17 @@ update map ({ life } as comet) =
                         >> Grid.ignoringErrors (Grid.remove ( x, y + 1 ))
                         >> Grid.ignoringErrors (Grid.remove ( x, y - 1 ))
                         >> (\m ->
-                                Random.map
-                                    (\float ->
-                                        ( new (Angle float)
+                                Random.map2
+                                    (\float bool ->
+                                        ( new
+                                            { angle = Angle float
+                                            , moveClockwise = bool
+                                            }
                                         , m
                                         )
                                     )
                                     (Random.float 0 (2 * pi))
+                                    (Random.int 0 1 |> Random.map ((==) 0))
                            )
                     )
                 |> Result.withDefault defaultCase
