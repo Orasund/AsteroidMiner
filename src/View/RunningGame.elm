@@ -7,6 +7,7 @@ import Data.Comet as Comet exposing (Comet)
 import Data.Game as Game exposing (Game)
 import Data.Map exposing (Map, Square, SquareType(..))
 import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
+import Dict
 import Grid.Bordered as Grid exposing (Error(..))
 import Lib.Neighborhood as Neighborhood
 import Location exposing (Angle(..))
@@ -167,28 +168,23 @@ timePassed ({ game, seed, winCondition } as model) =
 
 deleteSqaure : ( Int, Int ) -> Model -> Model
 deleteSqaure pos ({ game } as model) =
-    let
-        updateFun : Maybe Square -> Result () (Maybe Square)
-        updateFun maybeElem =
-            case maybeElem of
-                Just ( BuildingSquare building, maybeItem ) ->
-                    if building.sort |> Building.canBreak then
-                        Ok <| Just <| Game.emptySquare maybeItem
+    case Dict.get pos model.game.map of
+        Just ( BuildingSquare building, maybeItem ) ->
+            if building.sort |> Building.canBreak then
+                { model
+                    | game =
+                        { game
+                            | map =
+                                game.map
+                                    |> Dict.insert pos (Game.emptySquare maybeItem)
+                        }
+                }
 
-                    else
-                        Err ()
+            else
+                model
 
-                _ ->
-                    Err ()
-    in
-    { model
-        | game =
-            { game
-                | map =
-                    game.map
-                        |> (Grid.ignoringErrors <| Grid.update pos updateFun)
-            }
-    }
+        _ ->
+            model
 
 
 placeSquare : BuildingType -> ( Int, Int ) -> Model -> Model
@@ -198,10 +194,10 @@ placeSquare building position ({ game } as model) =
         defaultCase =
             model
 
-        updateSquare : BuildingType -> Maybe Square -> Result () (Maybe Square)
-        updateSquare b maybeSquare =
-            case maybeSquare of
-                Just ( GroundSquare (Mountain { big }), _ ) ->
+        updateSquare : BuildingType -> Square -> Square
+        updateSquare b square =
+            case square of
+                ( GroundSquare (Mountain { big }), _ ) ->
                     b
                         |> Game.newBuilding True
                             (if big then
@@ -210,27 +206,19 @@ placeSquare building position ({ game } as model) =
                              else
                                 Data.mineVolume
                             )
-                        |> Just
-                        |> Ok
 
-                Just ( _, maybeItem ) ->
-                    Ok <|
-                        Just <|
-                            Game.newBuilding maybeItem 0 b
-
-                Nothing ->
-                    Err ()
+                ( _, maybeItem ) ->
+                    Game.newBuilding maybeItem 0 b
     in
     case game.map |> Neighborhood.fromPosition position of
         ( Just _, _ ) ->
-            case game.map |> Grid.update position (updateSquare building) of
-                Ok m ->
-                    { model
-                        | game = { game | map = m }
-                    }
-
-                Err _ ->
-                    defaultCase
+            game.map
+                |> Dict.update position (Maybe.map (updateSquare building))
+                |> (\m ->
+                        { model
+                            | game = { game | map = m }
+                        }
+                   )
 
         _ ->
             defaultCase
@@ -250,8 +238,7 @@ squareClicked position ({ gui, game } as model) =
                     { game
                         | map =
                             game.map
-                                |> Grid.ignoringErrors
-                                    (Grid.insert position ( GroundSquare Dirt, False ))
+                                |> Dict.insert position ( GroundSquare Dirt, False )
                         , debts =
                             game.debts + floorCosts
                     }

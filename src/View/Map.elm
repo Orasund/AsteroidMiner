@@ -1,10 +1,11 @@
 module View.Map exposing (view, viewSquareType)
 
 import Building exposing (BuildingType(..), GroundType(..))
+import Data
 import Data.Game as Game
 import Data.Map exposing (Map, Square, SquareType(..))
 import Data.ToolSelection exposing (ToolSelection(..))
-import Grid.Bordered as Grid
+import Dict
 import PixelEngine.Tile as Tile exposing (Tile)
 import View.Tileset as Tileset
 
@@ -82,31 +83,48 @@ viewSquare { position, onClick, valid } ( squareType, maybeItem ) =
            )
 
 
-view : { onClick : ( Int, Int ) -> msg, selected : Maybe ToolSelection, inventory : Int } -> Map -> List ( ( Int, Int ), Tile msg )
+view :
+    { onClick : ( Int, Int ) -> msg
+    , selected : Maybe ToolSelection
+    , inventory : Int
+    }
+    -> Map
+    -> List ( ( Int, Int ), Tile msg )
 view { onClick, selected } map =
-    map
-        |> Grid.map
-            (\pos maybeSquare ->
-                case
-                    ( maybeSquare
-                    , selected
-                        |> Maybe.map (\s -> Game.isValid s pos map)
-                        |> Maybe.withDefault False
-                    )
-                of
-                    ( Just square, valid ) ->
-                        square
-                            |> viewSquare
-                                { position = pos
-                                , onClick = onClick
-                                , valid = Just valid
-                                }
-                            |> Just
-
-                    ( Nothing, True ) ->
-                        Just (Tileset.valid |> Tile.clickable (onClick pos))
-
-                    _ ->
-                        Nothing
+    List.range 0 (Data.size - 1)
+        |> List.concatMap
+            (\x ->
+                List.range 0 (Data.size - 1)
+                    |> List.map (Tuple.pair x)
             )
-        >> Grid.toList
+        |> List.filterMap
+            (\pos ->
+                map
+                    |> Dict.get pos
+                    |> (\maybeSquare ->
+                            case
+                                ( maybeSquare
+                                , selected
+                                    |> Maybe.map (\s -> Game.isValid s pos map)
+                                    |> Maybe.withDefault False
+                                )
+                            of
+                                ( Just square, valid ) ->
+                                    square
+                                        |> viewSquare
+                                            { position = pos
+                                            , onClick = onClick
+                                            , valid = Just valid
+                                            }
+                                        |> Tuple.pair pos
+                                        |> Just
+
+                                ( Nothing, True ) ->
+                                    (Tileset.valid |> Tile.clickable (onClick pos))
+                                        |> Tuple.pair pos
+                                        |> Just
+
+                                _ ->
+                                    Nothing
+                       )
+            )

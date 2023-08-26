@@ -6,7 +6,7 @@ import Color
 import Data exposing (size, spriteSize)
 import Data.Game as Game
 import Data.Map exposing (Map, SquareType(..))
-import Grid.Bordered as Grid
+import Dict
 import Html exposing (Html)
 import Html.Attributes
 import Layout
@@ -141,8 +141,7 @@ tutorial num map =
     )
         |> List.foldl
             (\( pos, building ) ->
-                Grid.ignoringErrors
-                    (Grid.update pos <| always <| Ok <| Just <| building)
+                Dict.insert pos building
             )
             map
 

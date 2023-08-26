@@ -10,7 +10,7 @@ import Data
 import Data.Comet exposing (Comet)
 import Data.Map exposing (Map, Neighborhood, SingleCommand, Square, SquareType(..))
 import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
-import Grid.Bordered as Grid
+import Dict
 import Lib.Neighborhood as Neighborhood
 
 
@@ -107,8 +107,8 @@ isGroundType groundType =
 
 isValid : ToolSelection -> ( Int, Int ) -> Map -> Bool
 isValid selected position map =
-    case map |> Grid.get position of
-        Ok (Just square) ->
+    case map |> Dict.get position of
+        Just square ->
             case ( selected, square ) of
                 ( ToolSelection.Floor, _ ) ->
                     False
@@ -148,13 +148,10 @@ isValid selected position map =
                 ( _, _ ) ->
                     False
 
-        Ok Nothing ->
+        Nothing ->
             (selected == ToolSelection.Floor)
                 && (map
                         |> Neighborhood.fromPosition position
                         |> Tuple.second
                         |> List.any (Tuple.second >> (/=) Nothing)
                    )
-
-        _ ->
-            False

@@ -2,7 +2,7 @@ module Data.Comet exposing (Comet, new, position, update)
 
 import Data exposing (framesPerComet, size)
 import Data.Map exposing (Map)
-import Grid.Bordered as Grid
+import Dict
 import Location exposing (Angle(..))
 import Position
 import Random exposing (Generator)
@@ -155,30 +155,27 @@ update map ({ life } as comet) =
         impactCase : Generator ( Comet, Map )
         impactCase =
             map
-                |> Grid.remove ( x, y )
-                |> Result.map
-                    (Grid.ignoringErrors (Grid.remove ( x + 1, y ))
-                        >> Grid.ignoringErrors (Grid.remove ( x - 1, y ))
-                        >> Grid.ignoringErrors (Grid.remove ( x, y + 1 ))
-                        >> Grid.ignoringErrors (Grid.remove ( x, y - 1 ))
-                        >> (\m ->
-                                Random.map2
-                                    (\float bool ->
-                                        ( new
-                                            { angle = Angle float
-                                            , moveClockwise = bool
-                                            }
-                                        , m
-                                        )
-                                    )
-                                    (Random.float 0 (2 * pi))
-                                    (Random.int 0 1 |> Random.map ((==) 0))
-                           )
-                    )
-                |> Result.withDefault defaultCase
+                |> Dict.remove ( x, y )
+                |> Dict.remove ( x + 1, y )
+                |> Dict.remove ( x - 1, y )
+                |> Dict.remove ( x, y + 1 )
+                |> Dict.remove ( x, y - 1 )
+                |> (\m ->
+                        Random.map2
+                            (\float bool ->
+                                ( new
+                                    { angle = Angle float
+                                    , moveClockwise = bool
+                                    }
+                                , m
+                                )
+                            )
+                            (Random.float 0 (2 * pi))
+                            (Random.int 0 1 |> Random.map ((==) 0))
+                   )
     in
-    case map |> Grid.get ( x, y ) of
-        Ok (Just _) ->
+    case map |> Dict.get ( x, y ) of
+        Just _ ->
             impactCase
 
         _ ->

@@ -1,9 +1,10 @@
 module Data.Map exposing (..)
 
 import Building exposing (Building, BuildingType(..), GroundType(..), Volume(..))
-import Data exposing (size)
+import Data
+import Dict exposing (Dict)
 import Direction exposing (Direction)
-import Grid.Bordered as Grid exposing (Error(..), Grid)
+import Grid.Bordered as Grid exposing (Error(..))
 import Lib.Neighborhood as Neighborhood
 import Position
 
@@ -30,7 +31,7 @@ type alias Square =
 
 
 type alias Map =
-    Grid Square
+    Dict ( Int, Int ) Square
 
 
 init : Map
@@ -38,25 +39,35 @@ init =
     let
         center : Int
         center =
-            size // 2
+            Data.size // 2
     in
-    Grid.fill
-        (\( x, y ) ->
-            if (x + 1 - center) ^ 2 + (y - 1 - center) ^ 2 <= 1 ^ 2 then
-                ( GroundSquare <| Mountain { big = True }, False ) |> Just
+    List.range 0 (Data.size - 1)
+        |> List.concatMap
+            (\x ->
+                List.range 0 (Data.size - 1)
+                    |> List.map (Tuple.pair x)
+            )
+        |> List.filterMap
+            (\( x, y ) ->
+                if (x + 1 - center) ^ 2 + (y - 1 - center) ^ 2 <= 1 ^ 2 then
+                    ( GroundSquare <| Mountain { big = True }, False )
+                        |> Tuple.pair ( x, y )
+                        |> Just
 
-            else if (x + 1 - center) ^ 2 + (y - 1 - center) ^ 2 <= 3 ^ 2 then
-                ( GroundSquare <| Mountain { big = False }, False ) |> Just
+                else if (x + 1 - center) ^ 2 + (y - 1 - center) ^ 2 <= 3 ^ 2 then
+                    ( GroundSquare <| Mountain { big = False }, False )
+                        |> Tuple.pair ( x, y )
+                        |> Just
 
-            else if (x - center) ^ 2 + (y - center) ^ 2 <= 4 ^ 2 then
-                ( GroundSquare <| Dirt, False ) |> Just
+                else if (x - center) ^ 2 + (y - center) ^ 2 <= 4 ^ 2 then
+                    ( GroundSquare <| Dirt, False )
+                        |> Tuple.pair ( x, y )
+                        |> Just
 
-            else
-                Nothing
-        )
-        { rows = size
-        , columns = size
-        }
+                else
+                    Nothing
+            )
+        |> Dict.fromList
 
 
 update :
@@ -67,10 +78,15 @@ update :
     -> Map
     -> ( Map, Int )
 update fun map =
-    map
-        |> Grid.foldl
-            (\pos maybeSquare ( m, inv ) ->
-                case maybeSquare of
+    List.range 0 (Data.size - 1)
+        |> List.concatMap
+            (\x ->
+                List.range 0 (Data.size - 1)
+                    |> List.map (Tuple.pair x)
+            )
+        |> List.foldl
+            (\pos ( m, inv ) ->
+                case Dict.get pos map of
                     Just (( BuildingSquare { sort, value }, maybeItem ) as square) ->
                         ( m |> apply (fun.update pos) pos square { empty = fun.empty, lookUp = map, canStore = fun.canStore }
                         , inv
@@ -98,34 +114,29 @@ update fun map =
             ( map, 0 )
 
 
-store : ( Int, Int ) -> Building -> Map -> Result Error Map
+store : ( Int, Int ) -> Building -> Map -> Maybe Map
 store pos ({ value } as building) m =
     let
         maybeItem : Bool
         maybeItem =
             m
-                |> Grid.get pos
-                |> Result.toMaybe
-                |> Maybe.andThen identity
+                |> Dict.get pos
                 |> Maybe.map Tuple.second
                 |> Maybe.withDefault False
     in
-    m
-        |> Grid.update pos
-            (always <|
-                if
-                    (value < Data.maxValue)
-                        && (maybeItem /= False)
-                then
-                    Ok <|
-                        Just <|
-                            ( BuildingSquare { building | value = value + 1 }
-                            , False
-                            )
+    if
+        (value < Data.maxValue)
+            && (maybeItem /= False)
+    then
+        m
+            |> Dict.insert pos
+                ( BuildingSquare { building | value = value + 1 }
+                , False
+                )
+            |> Just
 
-                else
-                    Err ()
-            )
+    else
+        Nothing
 
 
 send :
@@ -139,77 +150,65 @@ send :
         }
     -> Direction
     -> Map
-    -> Result Error Map
+    -> Maybe Map
 send pos ({ value } as building) maybeItem { lookUp, canStore } direction m =
     let
         neighborPos : ( Int, Int )
         neighborPos =
             direction |> Direction.toCoord |> Position.addTo pos
 
-        updateNeighbor : Map -> Result Error Map
-        updateNeighbor =
-            Grid.update neighborPos
-                (\maybeSquare ->
-                    case maybeSquare of
-                        Just ( BuildingSquare b, False ) ->
-                            Ok <|
-                                Just <|
-                                    ( BuildingSquare b, True )
+        updateNeighbor : Map -> Maybe Map
+        updateNeighbor map =
+            case map |> Dict.get neighborPos of
+                Just ( BuildingSquare b, False ) ->
+                    map
+                        |> Dict.insert neighborPos ( BuildingSquare b, True )
+                        |> Just
 
-                        _ ->
-                            Err ()
-                )
+                _ ->
+                    Nothing
 
-        solveConflict : Map -> Result Error Map
-        solveConflict =
-            Grid.update neighborPos
-                (\maybeSquare ->
-                    case maybeSquare of
-                        Just ( BuildingSquare b, True ) ->
-                            if canStore neighborPos b.sort { value = b.value } then
-                                Ok <|
-                                    Just <|
-                                        ( BuildingSquare { b | value = b.value + 1 }, True )
+        solveConflict : Map -> Maybe Map
+        solveConflict map =
+            case Dict.get neighborPos map of
+                Just ( BuildingSquare b, True ) ->
+                    if canStore neighborPos b.sort { value = b.value } then
+                        map
+                            |> Dict.insert neighborPos
+                                ( BuildingSquare { b | value = b.value + 1 }
+                                , True
+                                )
+                            |> Just
 
-                            else
-                                Err ()
+                    else
+                        Nothing
 
-                        _ ->
-                            Err ()
-                )
+                _ ->
+                    Nothing
     in
     if maybeItem then
-        lookUp
-            |> Grid.get neighborPos
-            |> Result.andThen
-                (\maybeEntry ->
-                    m
-                        |> (case maybeEntry of
-                                Just ( BuildingSquare _, False ) ->
-                                    updateNeighbor
+        m
+            |> (case Dict.get neighborPos lookUp of
+                    Just ( BuildingSquare _, False ) ->
+                        updateNeighbor
 
-                                Just ( BuildingSquare _, True ) ->
-                                    solveConflict
+                    Just ( BuildingSquare _, True ) ->
+                        solveConflict
 
-                                _ ->
-                                    always <| Err NotSuccessful
-                           )
-                )
-            |> Result.andThen
-                (Grid.update pos
-                    (\_ ->
-                        ( BuildingSquare building, False )
-                            |> Just
-                            |> Ok
-                    )
-                )
+                    _ ->
+                        \_ -> Nothing
+               )
+            |> Maybe.map
+                (Dict.insert pos ( BuildingSquare building, False ))
 
     else if value > 0 then
         m
-            |> Grid.update pos (\_ -> ( BuildingSquare { building | value = building.value - 1 }, True ) |> Just |> Ok)
+            |> Dict.insert pos
+                ( BuildingSquare { building | value = building.value - 1 }, True )
+            |> Just
 
     else
-        Err NotSuccessful
+        Nothing
 
 
 apply :
@@ -225,45 +224,42 @@ apply :
     -> Map
 apply command pos ( squareType, maybeItem ) ({ empty } as config) map =
     let
-        transition : Building -> BuildingType -> Map -> Result Error Map
-        transition building sort =
-            Grid.update pos <|
-                \maybeSquare ->
-                    case maybeSquare of
-                        Just ( BuildingSquare _, mI ) ->
-                            Ok <|
-                                Just <|
-                                    ( BuildingSquare { building | sort = sort }
-                                    , mI
-                                    )
-
-                        _ ->
-                            Err ()
-
-        create : Building -> Map -> Result Error Map
-        create building =
-            Grid.update pos <|
-                always <|
-                    Ok <|
-                        Just <|
-                            ( BuildingSquare { building | value = 0 }
-                            , True
+        transition : Building -> BuildingType -> Map -> Maybe Map
+        transition building sort m =
+            case m |> Dict.get pos of
+                Just ( BuildingSquare _, mI ) ->
+                    m
+                        |> Dict.insert pos
+                            ( BuildingSquare { building | sort = sort }
+                            , mI
                             )
+                        |> Just
 
-        destroy : Building -> Map -> Result Error Map
-        destroy _ =
-            Grid.update pos <|
-                \maybeSquare ->
-                    case maybeSquare of
-                        Just ( BuildingSquare _, mI ) ->
-                            Ok <|
-                                Just <|
-                                    ( GroundSquare empty
-                                    , mI
-                                    )
+                _ ->
+                    Nothing
 
-                        _ ->
-                            Err ()
+        create : Building -> Map -> Maybe Map
+        create building m =
+            m
+                |> Dict.insert pos
+                    ( BuildingSquare { building | value = 0 }
+                    , True
+                    )
+                |> Just
+
+        destroy : Building -> Map -> Maybe Map
+        destroy _ m =
+            case Dict.get pos m of
+                Just ( BuildingSquare _, mI ) ->
+                    m
+                        |> Dict.insert pos
+                            ( GroundSquare empty
+                            , mI
+                            )
+                        |> Just
+
+                _ ->
+                    Nothing
     in
     case squareType of
         GroundSquare _ ->
@@ -290,7 +286,6 @@ apply command pos ( squareType, maybeItem ) ({ empty } as config) map =
                                     Destroy ->
                                         destroy building
                                )
-                            |> Result.toMaybe
                     )
                 |> List.head
                 |> Maybe.withDefault map
