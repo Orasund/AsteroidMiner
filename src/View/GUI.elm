@@ -1,6 +1,6 @@
 module View.GUI exposing (Model, Msg, init, select, toDefault, update, view)
 
-import Data exposing (floorCosts, maxValue, mineVolume, size, spriteSize)
+import Config exposing (floorCosts, maxValue, mineVolume, size, spriteSize)
 import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
 import Location exposing (Location)
 import PixelEngine.Image as Image exposing (Image)

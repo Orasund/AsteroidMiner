@@ -1,6 +1,6 @@
 module Data.Comet exposing (Comet, new, position, update)
 
-import Data exposing (framesPerComet, size)
+import Config exposing (framesPerComet, size)
 import Data.Map exposing (Map)
 import Dict
 import Location exposing (Angle(..))
@@ -19,12 +19,13 @@ new : { angle : Angle, moveClockwise : Bool } -> Comet
 new args =
     { life = framesPerComet
     , offset = args.angle
-    , slope =
-        if args.moveClockwise then
+    , slope = 1
+
+    {--if args.moveClockwise then
             -1
 
         else
-            1
+            1--}
     }
 
 

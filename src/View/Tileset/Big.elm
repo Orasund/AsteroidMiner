@@ -11,7 +11,7 @@ module View.Tileset.Big exposing
     , tutorialMenuButton
     )
 
-import Data exposing (spriteSize)
+import Config exposing (spriteSize)
 import Html exposing (Html)
 import PixelEngine.Image as Image exposing (Image)
 import PixelEngine.Tile as Tile exposing (Tile, Tileset)

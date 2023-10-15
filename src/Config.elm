@@ -1,4 +1,6 @@
-module Data exposing (floorCosts, fps, framesPerComet, maxValue, mineVolume, size, spriteSize, version, winAt)
+module Config exposing (defaultOptions, floorCosts, fps, framesPerComet, maxValue, mineVolume, size, spriteSize, version, winAt)
+
+import PixelEngine.Options as Options exposing (Options)
 
 
 fps : Float
@@ -49,3 +51,10 @@ size =
 spriteSize : Float
 spriteSize =
     8
+
+
+defaultOptions : Options msg
+defaultOptions =
+    Options.default
+        |> Options.withMovementSpeed (1 / fps)
+        |> Options.withScale 3

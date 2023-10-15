@@ -1,6 +1,6 @@
 module View.Inventory exposing (view)
 
-import Data exposing (size, spriteSize)
+import Config exposing (size, spriteSize)
 import Location exposing (Location)
 import PixelEngine.Image as Image exposing (Image)
 import PixelEngine.Tile as Tile

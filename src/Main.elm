@@ -3,7 +3,7 @@ module Main exposing (main)
 import Action exposing (Action)
 import Browser
 import Building exposing (BuildingType(..))
-import Data exposing (fps, size, spriteSize)
+import Config exposing (fps, size, spriteSize)
 import Data.Map exposing (SquareType(..))
 import Html exposing (Html)
 import Html.Attributes
@@ -159,29 +159,24 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     let
-        defaultOptions : Options msg
-        defaultOptions =
-            Options.default
-                |> Options.withMovementSpeed (1 / fps)
-                |> Options.withScale 3
-
         map : (a -> Msg) -> List (Area a) -> List (Area Msg)
         map mapper o =
             o |> List.map (PixelEngine.mapArea mapper)
 
+        body : Html Msg
         body =
             case model of
                 Loading ->
                     Layout.none
 
                 Menu menuModel ->
-                    Menu.view MenuSpecific defaultOptions menuModel
+                    Menu.view MenuSpecific menuModel
 
                 Game gameModel ->
-                    Game.view GameSpecific defaultOptions gameModel
+                    Game.view GameSpecific gameModel
 
                 Tutorial tutorialModel ->
-                    Tutorial.view TutorialSpecific defaultOptions tutorialModel
+                    Tutorial.view TutorialSpecific tutorialModel
     in
     [ View.stylesheet
     , body

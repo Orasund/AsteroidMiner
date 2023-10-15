@@ -2,7 +2,7 @@ module Page.Menu exposing (Model, Msg(..), init, subscriptions, update, view)
 
 import Action exposing (Action)
 import Color
-import Data exposing (size, spriteSize, version)
+import Config exposing (size, spriteSize, version)
 import Html exposing (Html)
 import Html.Attributes
 import Layout
@@ -67,8 +67,8 @@ subscriptions =
     Time.every 500 (\_ -> FrameRequested)
 
 
-view : (Msg -> msg) -> Options msg -> Model -> Html msg
-view mapper options model =
+view : (Msg -> msg) -> Model -> Html msg
+view mapper model =
     [ "Asteroid Miner" |> Layout.text [ Html.Attributes.style "font-size" "2rem" ]
     , View.sprite []
         { spriteHeight = 128

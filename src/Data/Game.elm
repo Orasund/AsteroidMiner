@@ -6,7 +6,7 @@ import Building.Merger as Merger
 import Building.Mine as Mine
 import Building.Pipe as Pipe
 import Building.Sorter as Sorter
-import Data
+import Config
 import Data.Comet exposing (Comet)
 import Data.Map exposing (Map, Neighborhood, SingleCommand, Square, SquareType(..))
 import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))

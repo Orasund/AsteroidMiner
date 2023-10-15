@@ -2,13 +2,14 @@ module View.RunningGame exposing (Model, Msg(..), Status(..), areas, gameArea, g
 
 import Building exposing (BuildingType(..), GroundType(..), Volume(..))
 import Color
-import Data exposing (floorCosts, fps, size, spriteSize)
+import Config exposing (floorCosts, fps, size, spriteSize)
 import Data.Comet as Comet exposing (Comet)
 import Data.Game as Game exposing (Game)
 import Data.Map exposing (Map, Square, SquareType(..))
 import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
 import Dict
 import Grid.Bordered as Grid exposing (Error(..))
+import Html exposing (Html)
 import Lib.Neighborhood as Neighborhood
 import Location exposing (Angle(..))
 import PixelEngine exposing (Area)
@@ -201,10 +202,10 @@ placeSquare building position ({ game } as model) =
                     b
                         |> Game.newBuilding True
                             (if big then
-                                Data.mineVolume * 2
+                                Config.mineVolume * 2
 
                              else
-                                Data.mineVolume
+                                Config.mineVolume
                             )
 
                 ( _, maybeItem ) ->
@@ -311,7 +312,7 @@ viewComet comet =
     ( Comet.position comet, Tileset.comet )
 
 
-gameArea : List ( ( Int, Int ), Tile Msg ) -> Model -> Area Msg
+gameArea : List ( ( Int, Int ), Tile Msg ) -> Model -> Html Msg
 gameArea content model =
     List.concat
         [ Map.view
@@ -333,6 +334,11 @@ gameArea content model =
                     , height = spriteSize
                     }
             }
+        |> List.singleton
+        |> PixelEngine.toHtml
+            { options = Just Config.defaultOptions
+            , width = (toFloat <| Config.size) * Config.spriteSize
+            }
 
 
 guiArea : Model -> Area Msg
@@ -347,8 +353,13 @@ guiArea model =
         |> PixelEngine.mapArea GuiSpecific
 
 
-areas : List ( ( Int, Int ), Tile Msg ) -> Model -> List (Area Msg)
+areas : List ( ( Int, Int ), Tile Msg ) -> Model -> List (Html Msg)
 areas content model =
     [ gameArea content model
     , guiArea model
+        |> List.singleton
+        |> PixelEngine.toHtml
+            { options = Just Config.defaultOptions
+            , width = (toFloat <| Config.size) * Config.spriteSize
+            }
     ]

@@ -1,7 +1,7 @@
 module View.Map exposing (view, viewSquareType)
 
 import Building exposing (BuildingType(..), GroundType(..))
-import Data
+import Config
 import Data.Game as Game
 import Data.Map exposing (Map, Square, SquareType(..))
 import Data.ToolSelection exposing (ToolSelection(..))
@@ -91,10 +91,10 @@ view :
     -> Map
     -> List ( ( Int, Int ), Tile msg )
 view { onClick, selected } map =
-    List.range 0 (Data.size - 1)
+    List.range 0 (Config.size - 1)
         |> List.concatMap
             (\x ->
-                List.range 0 (Data.size - 1)
+                List.range 0 (Config.size - 1)
                     |> List.map (Tuple.pair x)
             )
         |> List.filterMap

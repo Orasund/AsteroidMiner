@@ -3,7 +3,7 @@ module Page.Tutorial exposing (Model, Msg, init, subscriptions, update, view)
 import Action exposing (Action)
 import Building exposing (BuildingType(..), Volume(..))
 import Color
-import Data exposing (size, spriteSize)
+import Config exposing (size, spriteSize)
 import Data.Game as Game
 import Data.Map exposing (Map, SquareType(..))
 import Dict
@@ -45,7 +45,7 @@ tutorial : Int -> Map -> Map
 tutorial num map =
     (case num of
         1 ->
-            [ ( ( 20, 20 ), Mine |> Game.newBuilding True Data.mineVolume )
+            [ ( ( 20, 20 ), Mine |> Game.newBuilding True Config.mineVolume )
             , ( ( 22, 20 ), Container Empty |> Game.newBuilding False 0 )
 
             --
@@ -54,49 +54,49 @@ tutorial num map =
 
             --
             , ( ( 21, 16 ), Pipe |> Game.newBuilding False 0 )
-            , ( ( 20, 16 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 20, 16 ), Mine |> Game.newBuilding True Config.mineVolume )
 
             --
-            , ( ( 20, 14 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 20, 14 ), Mine |> Game.newBuilding True Config.mineVolume )
             , ( ( 21, 14 ), Pipe |> Game.newBuilding False 0 )
             , ( ( 22, 14 ), Container Empty |> Game.newBuilding False 0 )
             ]
 
         2 ->
-            [ ( ( 20, 16 ), Mine |> Game.newBuilding True Data.mineVolume )
+            [ ( ( 20, 16 ), Mine |> Game.newBuilding True Config.mineVolume )
             , ( ( 21, 16 ), Pipe |> Game.newBuilding False 0 )
             , ( ( 22, 16 ), Pipe |> Game.newBuilding False 0 )
             , ( ( 23, 16 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 20, 15 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 20, 15 ), Mine |> Game.newBuilding True Config.mineVolume )
             , ( ( 23, 15 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 20, 14 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 20, 14 ), Mine |> Game.newBuilding True Config.mineVolume )
             , ( ( 23, 14 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 19, 13 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 19, 13 ), Mine |> Game.newBuilding True Config.mineVolume )
             , ( ( 20, 13 ), Pipe |> Game.newBuilding False 0 )
             , ( ( 21, 13 ), Pipe |> Game.newBuilding False 0 )
             , ( ( 22, 13 ), Pipe |> Game.newBuilding False 0 )
             , ( ( 23, 13 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 18, 12 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 18, 12 ), Mine |> Game.newBuilding True Config.mineVolume )
             , ( ( 23, 12 ), Container Empty |> Game.newBuilding False 0 )
             ]
 
         3 ->
-            [ ( ( 20, 14 ), Mine |> Game.newBuilding True Data.mineVolume )
+            [ ( ( 20, 14 ), Mine |> Game.newBuilding True Config.mineVolume )
             , ( ( 21, 14 ), Pipe |> Game.newBuilding False 0 )
-            , ( ( 22, 14 ), Container Empty |> Game.newBuilding False Data.mineVolume )
+            , ( ( 22, 14 ), Container Empty |> Game.newBuilding False Config.mineVolume )
             , ( ( 23, 14 ), Merger |> Game.newBuilding False 0 )
             , ( ( 23, 12 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 20, 16 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 20, 16 ), Mine |> Game.newBuilding True Config.mineVolume )
             , ( ( 21, 16 ), Pipe |> Game.newBuilding False 0 )
             , ( ( 22, 16 ), Container Empty |> Game.newBuilding False 0 )
             , ( ( 23, 16 ), Merger |> Game.newBuilding False 0 )
@@ -104,7 +104,7 @@ tutorial num map =
             , ( ( 23, 18 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 19, 20 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 19, 20 ), Mine |> Game.newBuilding True Config.mineVolume )
             , ( ( 20, 20 ), Pipe |> Game.newBuilding False 0 )
             , ( ( 21, 20 ), Container Empty |> Game.newBuilding False 0 )
             , ( ( 22, 20 ), Merger |> Game.newBuilding False 0 )
@@ -112,26 +112,26 @@ tutorial num map =
             , ( ( 22, 18 ), Pipe |> Game.newBuilding False 0 )
 
             --
-            , ( ( 18, 12 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 18, 12 ), Mine |> Game.newBuilding True Config.mineVolume )
             , ( ( 19, 12 ), Pipe |> Game.newBuilding False 0 )
             , ( ( 20, 12 ), Container Empty |> Game.newBuilding False 0 )
             , ( ( 22, 12 ), Pipe |> Game.newBuilding False 0 )
             ]
 
         4 ->
-            [ ( ( 18, 12 ), Mine |> Game.newBuilding True Data.mineVolume )
-            , ( ( 19, 13 ), Mine |> Game.newBuilding True Data.mineVolume )
+            [ ( ( 18, 12 ), Mine |> Game.newBuilding True Config.mineVolume )
+            , ( ( 19, 13 ), Mine |> Game.newBuilding True Config.mineVolume )
             , ( ( 20, 12 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 20, 15 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 20, 15 ), Mine |> Game.newBuilding True Config.mineVolume )
             , ( ( 21, 15 ), Pipe |> Game.newBuilding False 0 )
             , ( ( 23, 15 ), Container Empty |> Game.newBuilding False 0 )
             , ( ( 22, 14 ), Container Empty |> Game.newBuilding False 0 )
 
             --
-            , ( ( 20, 20 ), Mine |> Game.newBuilding True Data.mineVolume )
-            , ( ( 19, 21 ), Mine |> Game.newBuilding True Data.mineVolume )
+            , ( ( 20, 20 ), Mine |> Game.newBuilding True Config.mineVolume )
+            , ( ( 19, 21 ), Mine |> Game.newBuilding True Config.mineVolume )
             , ( ( 20, 21 ), Sorter |> Game.newBuilding False 0 )
             , ( ( 21, 21 ), Container Empty |> Game.newBuilding False 0 )
             ]
@@ -208,8 +208,8 @@ subscriptions { content } =
     content |> RunningGame.subscriptions |> Sub.map GameSpecific
 
 
-areas : Model -> List (Area Msg)
-areas { num, content } =
+areas : (Msg -> msg) -> Model -> Html msg
+areas mapper { num, content } =
     case content.status of
         Won ->
             [ PixelEngine.imageArea
@@ -224,6 +224,11 @@ areas { num, content } =
                   )
                 ]
             ]
+                |> List.map (PixelEngine.mapArea mapper)
+                |> PixelEngine.toHtml
+                    { options = Just Config.defaultOptions
+                    , width = (toFloat <| Config.size) * Config.spriteSize
+                    }
 
         Lost ->
             [ PixelEngine.imageArea
@@ -238,10 +243,14 @@ areas { num, content } =
                   )
                 ]
             ]
+                |> List.map (PixelEngine.mapArea mapper)
+                |> PixelEngine.toHtml
+                    { options = Just Config.defaultOptions
+                    , width = (toFloat <| Config.size) * Config.spriteSize
+                    }
 
         Running ->
             let
-                text : String -> ( Int, Int ) -> List ( ( Int, Int ), Tile msg )
                 text t ( x, y ) =
                     Tile.fromText ( 0, 10 ) t
                         |> List.indexedMap
@@ -330,24 +339,27 @@ areas { num, content } =
                                         ( ( 0 + i, 0 ), letter )
                                     )
                     )
+                |> Html.map GameSpecific
+                |> Html.map mapper
             , RunningGame.guiArea content
+                |> PixelEngine.mapArea GameSpecific
+                |> PixelEngine.mapArea mapper
+                |> List.singleton
+                |> PixelEngine.toHtml
+                    { options = Just Config.defaultOptions
+                    , width = (toFloat <| Config.size) * Config.spriteSize
+                    }
             ]
-                |> List.map (PixelEngine.mapArea GameSpecific)
+                |> Layout.column []
 
 
 view :
     (Msg -> msg)
-    -> Options msg
     -> Model
     -> Html msg
-view mapper options model =
+view mapper model =
     [ model
-        |> areas
-        |> List.map (PixelEngine.mapArea mapper)
-        |> PixelEngine.toHtml
-            { options = Just options
-            , width = (toFloat <| Data.size) * Data.spriteSize
-            }
+        |> areas mapper
     ]
         |> Layout.column
             ([ Html.Attributes.style "background-color" "rgb(20, 12, 28)"

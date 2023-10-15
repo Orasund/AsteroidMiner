@@ -2,7 +2,7 @@ module Page.Game exposing (Model, Msg, init, subscriptions, update, view)
 
 import Action exposing (Action)
 import Color
-import Data exposing (size, spriteSize, winAt)
+import Config exposing (size, spriteSize, winAt)
 import Data.Map exposing (SquareType(..))
 import Html exposing (Html)
 import Html.Attributes
@@ -57,14 +57,20 @@ update msg model =
                     Action.updating ( model, Cmd.none )
 
 
-areas : Model -> List (Area Msg)
+areas : Model -> Html Msg
 areas ({ status } as model) =
     case status of
         Running ->
             [ RunningGame.gameArea [] model
             , RunningGame.guiArea model
+                |> List.singleton
+                |> PixelEngine.toHtml
+                    { options = Just Config.defaultOptions
+                    , width = (toFloat <| Config.size) * Config.spriteSize
+                    }
             ]
-                |> List.map (PixelEngine.mapArea GameSpecific)
+                |> Layout.column []
+                |> Html.map GameSpecific
 
         Won ->
             [ PixelEngine.imageArea
@@ -79,6 +85,10 @@ areas ({ status } as model) =
                   )
                 ]
             ]
+                |> PixelEngine.toHtml
+                    { options = Just Config.defaultOptions
+                    , width = (toFloat <| Config.size) * Config.spriteSize
+                    }
 
         Lost ->
             [ PixelEngine.imageArea
@@ -93,21 +103,20 @@ areas ({ status } as model) =
                   )
                 ]
             ]
+                |> PixelEngine.toHtml
+                    { options = Just Config.defaultOptions
+                    , width = (toFloat <| Config.size) * Config.spriteSize
+                    }
 
 
 view :
     (Msg -> msg)
-    -> Options msg
     -> Model
     -> Html msg
-view mapper options model =
+view mapper model =
     [ model
         |> areas
-        |> List.map (PixelEngine.mapArea mapper)
-        |> PixelEngine.toHtml
-            { options = Just options
-            , width = (toFloat <| Data.size) * Data.spriteSize
-            }
+        |> Html.map mapper
     ]
         |> Layout.column
             ([ Html.Attributes.style "background-color" "rgb(20, 12, 28)"

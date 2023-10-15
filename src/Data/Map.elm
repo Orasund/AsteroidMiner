@@ -1,7 +1,7 @@
 module Data.Map exposing (..)
 
 import Building exposing (Building, BuildingType(..), GroundType(..), Volume(..))
-import Data
+import Config
 import Dict exposing (Dict)
 import Direction exposing (Direction)
 import Grid.Bordered as Grid exposing (Error(..))
@@ -39,12 +39,12 @@ init =
     let
         center : Int
         center =
-            Data.size // 2
+            Config.size // 2
     in
-    List.range 0 (Data.size - 1)
+    List.range 0 (Config.size - 1)
         |> List.concatMap
             (\x ->
-                List.range 0 (Data.size - 1)
+                List.range 0 (Config.size - 1)
                     |> List.map (Tuple.pair x)
             )
         |> List.filterMap
@@ -78,10 +78,10 @@ update :
     -> Map
     -> ( Map, Int )
 update fun map =
-    List.range 0 (Data.size - 1)
+    List.range 0 (Config.size - 1)
         |> List.concatMap
             (\x ->
-                List.range 0 (Data.size - 1)
+                List.range 0 (Config.size - 1)
                     |> List.map (Tuple.pair x)
             )
         |> List.foldl
@@ -125,7 +125,7 @@ store pos ({ value } as building) m =
                 |> Maybe.withDefault False
     in
     if
-        (value < Data.maxValue)
+        (value < Config.maxValue)
             && (maybeItem /= False)
     then
         m
