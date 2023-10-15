@@ -3,7 +3,6 @@ module Building.Container exposing (canStore, update)
 import Building exposing (BuildingType(..), Volume(..))
 import Config exposing (maxValue)
 import Data.Map exposing (Neighborhood, SingleCommand(..))
-import Lib.Neighborhood as Neighborhood
 
 
 canStore : Neighborhood -> { value : Int } -> Bool

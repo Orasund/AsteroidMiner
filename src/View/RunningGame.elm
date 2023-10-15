@@ -1,7 +1,6 @@
-module View.RunningGame exposing (Model, Msg(..), Status(..), areas, gameArea, guiArea, init, subscriptions, update)
+module View.RunningGame exposing (Model, Msg(..), Status(..), gameArea, guiArea, init, subscriptions, update)
 
 import Building exposing (BuildingType(..), GroundType(..), Volume(..))
-import Color
 import Config exposing (floorCosts, fps, size, spriteSize)
 import Data.Comet as Comet exposing (Comet)
 import Data.Game as Game exposing (Game)
@@ -12,7 +11,7 @@ import Grid.Bordered as Grid exposing (Error(..))
 import Html exposing (Html)
 import Lib.Neighborhood as Neighborhood
 import Location exposing (Angle(..))
-import PixelEngine exposing (Area)
+import PixelEngine
 import PixelEngine.Tile exposing (Tile)
 import Random exposing (Seed)
 import Time
@@ -341,25 +340,7 @@ gameArea content model =
             }
 
 
-guiArea : Model -> Area Msg
+guiArea : Model -> Html Msg
 guiArea model =
-    PixelEngine.imageArea
-        { height = 3 * spriteSize
-        , background =
-            PixelEngine.colorBackground <|
-                Color.rgb255 20 12 28
-        }
-        (GUI.view model.inventory model.gui)
-        |> PixelEngine.mapArea GuiSpecific
-
-
-areas : List ( ( Int, Int ), Tile Msg ) -> Model -> List (Html Msg)
-areas content model =
-    [ gameArea content model
-    , guiArea model
-        |> List.singleton
-        |> PixelEngine.toHtml
-            { options = Just Config.defaultOptions
-            , width = (toFloat <| Config.size) * Config.spriteSize
-            }
-    ]
+    GUI.view model.gui
+        |> Html.map GuiSpecific

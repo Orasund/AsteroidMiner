@@ -3,7 +3,6 @@ module Main exposing (main)
 import Action exposing (Action)
 import Browser
 import Building exposing (BuildingType(..))
-import Config exposing (fps, size, spriteSize)
 import Data.Map exposing (SquareType(..))
 import Html exposing (Html)
 import Html.Attributes
@@ -13,8 +12,7 @@ import Page exposing (GameMode(..))
 import Page.Game as Game
 import Page.Menu as Menu
 import Page.Tutorial as Tutorial
-import PixelEngine exposing (Area, Input(..), PixelEngine, gameWithNoControls)
-import PixelEngine.Options as Options exposing (Options)
+import PixelEngine exposing (Input(..))
 import Random exposing (Seed)
 import View
 
@@ -159,10 +157,6 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     let
-        map : (a -> Msg) -> List (Area a) -> List (Area Msg)
-        map mapper o =
-            o |> List.map (PixelEngine.mapArea mapper)
-
         body : Html Msg
         body =
             case model of

@@ -1,12 +1,14 @@
 module View.GUI exposing (Model, Msg, init, select, toDefault, update, view)
 
+import Color
 import Config exposing (floorCosts, maxValue, mineVolume, size, spriteSize)
 import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
+import Html exposing (Html)
+import Layout
 import Location exposing (Location)
+import PixelEngine
 import PixelEngine.Image as Image exposing (Image)
 import View
-import View.Inventory as Inventory
-import View.Tileset exposing (font)
 import View.Tileset.Big as Tileset
 
 
@@ -103,51 +105,58 @@ viewBlueprint selected blueprint =
             |> Image.clickable (Select (Just blueprint))
 
 
-viewDesc : Maybe ToolSelection -> List ( Location, Image Msg )
+viewDesc : Maybe ToolSelection -> Html Msg
 viewDesc selected =
-    let
-        text : String
-        text =
-            case selected of
-                Just ToolSelection.Mine ->
-                    "Mine - Mines " ++ String.fromInt mineVolume ++ " items"
+    (case selected of
+        Just ToolSelection.Mine ->
+            "Mine - Mines " ++ String.fromInt mineVolume ++ " items"
 
-                Just ToolSelection.Pipe ->
-                    "Pipe - Transports items"
+        Just ToolSelection.Pipe ->
+            "Pipe - Transports items"
 
-                Just ToolSelection.Container ->
-                    "Container - Stores " ++ String.fromInt maxValue ++ " items"
+        Just ToolSelection.Container ->
+            "Container - Stores " ++ String.fromInt maxValue ++ " items"
 
-                Just ToolSelection.Delete ->
-                    "DELETE BUILDINGS"
+        Just ToolSelection.Delete ->
+            "DELETE BUILDINGS"
 
-                Just ToolSelection.Merger ->
-                    "Merger - Takes from containers"
+        Just ToolSelection.Merger ->
+            "Merger - Takes from containers"
 
-                Just ToolSelection.Sorter ->
-                    "Sorter - Sorts into containers"
+        Just ToolSelection.Sorter ->
+            "Sorter - Sorts into containers"
 
-                Just ToolSelection.Floor ->
-                    "Floor - Costs " ++ String.fromInt floorCosts ++ " items"
+        Just ToolSelection.Floor ->
+            "Floor - Costs " ++ String.fromInt floorCosts ++ " items"
 
-                Nothing ->
-                    ""
-    in
-    [ ( ( 0, (toFloat <| 2) * spriteSize ), Image.fromText text font ) ]
+        Nothing ->
+            ""
+    )
+        |> Layout.text []
 
 
-view : Int -> Model -> List ( Location, Image Msg )
-view inventory { selected } =
-    List.concat
-        [ [ Mine
-          , Pipe
-          , Container
-          , Merger
-          , Floor
-          , Delete
-          ]
-            |> List.map (viewBlueprint selected)
-            |> viewList
-        , viewDesc selected
-        , Inventory.view inventory
-        ]
+view : Model -> Html Msg
+view { selected } =
+    [ [ Mine
+      , Pipe
+      , Container
+      , Merger
+      , Floor
+      , Delete
+      ]
+        |> List.map (viewBlueprint selected)
+        |> viewList
+        |> PixelEngine.imageArea
+            { height = 2 * spriteSize
+            , background =
+                PixelEngine.colorBackground <|
+                    Color.rgb255 20 12 28
+            }
+        |> List.singleton
+        |> PixelEngine.toHtml
+            { options = Just Config.defaultOptions
+            , width = (toFloat <| Config.size) * Config.spriteSize
+            }
+    , viewDesc selected
+    ]
+        |> Layout.column Layout.centered

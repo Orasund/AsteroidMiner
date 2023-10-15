@@ -1,20 +1,13 @@
 module Page.Menu exposing (Model, Msg(..), init, subscriptions, update, view)
 
 import Action exposing (Action)
-import Color
-import Config exposing (size, spriteSize, version)
 import Html exposing (Html)
 import Html.Attributes
 import Layout
 import Page exposing (GameMode(..))
-import PixelEngine exposing (Area)
-import PixelEngine.Image as Image
-import PixelEngine.Options exposing (Options)
-import PixelEngine.Tile as Tile
 import Random exposing (Seed)
 import Time
 import View
-import View.Tileset exposing (font)
 import View.Tileset.Big
 
 

@@ -7,9 +7,8 @@ import Data.Map exposing (SquareType(..))
 import Html exposing (Html)
 import Html.Attributes
 import Layout
-import PixelEngine exposing (Area)
+import PixelEngine
 import PixelEngine.Image as Image
-import PixelEngine.Options as Options exposing (Options, Transition)
 import Random exposing (Seed)
 import View
 import View.RunningGame as RunningGame exposing (Status(..))
@@ -61,15 +60,13 @@ areas : Model -> Html Msg
 areas ({ status } as model) =
     case status of
         Running ->
-            [ RunningGame.gameArea [] model
+            [ String.fromInt model.inventory
+                ++ " items"
+                |> Layout.text []
+            , RunningGame.gameArea [] model
             , RunningGame.guiArea model
-                |> List.singleton
-                |> PixelEngine.toHtml
-                    { options = Just Config.defaultOptions
-                    , width = (toFloat <| Config.size) * Config.spriteSize
-                    }
             ]
-                |> Layout.column []
+                |> Layout.column [ Layout.gap 16 ]
                 |> Html.map GameSpecific
 
         Won ->

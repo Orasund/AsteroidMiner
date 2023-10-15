@@ -10,10 +10,9 @@ import Dict
 import Html exposing (Html)
 import Html.Attributes
 import Layout
-import PixelEngine exposing (Area)
+import PixelEngine
 import PixelEngine.Image as Image
-import PixelEngine.Options exposing (Options)
-import PixelEngine.Tile as Tile exposing (Tile)
+import PixelEngine.Tile as Tile
 import Random exposing (Seed)
 import View
 import View.RunningGame as RunningGame exposing (Status(..))
@@ -258,7 +257,10 @@ areas mapper { num, content } =
                                 ( ( x + i, y ), letter )
                             )
             in
-            [ content
+            [ String.fromInt content.inventory
+                ++ " items"
+                |> Layout.text []
+            , content
                 |> RunningGame.gameArea
                     (case num of
                         1 ->
@@ -342,15 +344,10 @@ areas mapper { num, content } =
                 |> Html.map GameSpecific
                 |> Html.map mapper
             , RunningGame.guiArea content
-                |> PixelEngine.mapArea GameSpecific
-                |> PixelEngine.mapArea mapper
-                |> List.singleton
-                |> PixelEngine.toHtml
-                    { options = Just Config.defaultOptions
-                    , width = (toFloat <| Config.size) * Config.spriteSize
-                    }
+                |> Html.map GameSpecific
+                |> Html.map mapper
             ]
-                |> Layout.column []
+                |> Layout.column [ Layout.gap 16 ]
 
 
 view :
