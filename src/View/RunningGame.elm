@@ -9,6 +9,7 @@ import Data.ToolSelection as ToolSelection exposing (ToolSelection(..))
 import Dict
 import Grid.Bordered as Grid exposing (Error(..))
 import Html exposing (Html)
+import Html.Attributes
 import Lib.Neighborhood as Neighborhood
 import Location exposing (Angle(..))
 import PixelEngine
@@ -306,21 +307,30 @@ subscriptions _ =
 ----------------------
 
 
-viewComet : Comet -> ( ( Int, Int ), Tile msg )
+viewComet : Comet -> Html msg
 viewComet comet =
-    ( Comet.position comet, Tileset.comet )
+    let
+        ( x, y ) =
+            Comet.position comet
+    in
+    Tileset.comet
+        [ Html.Attributes.style "position" "absolute"
+        , Html.Attributes.style "top" (String.fromInt (y * 8 * 3) ++ "px")
+        , Html.Attributes.style "left" (String.fromInt (x * 8 * 3) ++ "px")
+        , Html.Attributes.style "animation" "rotation 60s infinite linear"
+        , Html.Attributes.style "transition" "top 1s,left 1s"
+        ]
 
 
 gameArea : List ( ( Int, Int ), Tile Msg ) -> Model -> Html Msg
 gameArea content model =
-    List.concat
+    [ List.concat
         [ Map.view
             { onClick = SquareClicked
             , selected = model.gui.selected
             , inventory = model.inventory
             }
             model.game.map
-        , [ viewComet model.game.comet ]
         , content
         ]
         |> PixelEngine.tiledArea
@@ -338,6 +348,9 @@ gameArea content model =
             { options = Just Config.defaultOptions
             , width = (toFloat <| Config.size) * Config.spriteSize
             }
+    , viewComet model.game.comet
+    ]
+        |> Html.div [ Html.Attributes.style "position" "relative" ]
 
 
 guiArea : Model -> Html Msg

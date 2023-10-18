@@ -23,6 +23,15 @@ button:hover{
 button:focus{
     filter:brightness(0.7);
 }
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
     """
         |> Html.text
         |> List.singleton

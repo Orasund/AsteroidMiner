@@ -19,8 +19,6 @@ spriteImage :
         , width : Float
         , height : Float
         , pos : ( Int, Int )
-        , spriteHeight : Float
-        , spriteWidth : Float
         , sheetColumns : Int
         , sheetRows : Int
         }
@@ -29,12 +27,6 @@ spriteImage attrs args =
     let
         ( x, y ) =
             args.pos
-
-        scaleX =
-            args.width / args.spriteWidth
-
-        scaleY =
-            args.height / args.spriteHeight
     in
     Html.div
         ([ Html.Attributes.style "width" (String.fromFloat args.width ++ "px")
@@ -43,17 +35,18 @@ spriteImage attrs args =
             ++ args.url
             ++ ") "
             |> Html.Attributes.style "background-image"
-         , String.fromFloat (-args.spriteWidth * scaleX * toFloat x)
+         , String.fromFloat (-args.width * toFloat x)
             ++ "px "
-            ++ String.fromFloat (-args.spriteHeight * scaleY * toFloat y)
+            ++ String.fromFloat (-args.height * toFloat y)
             ++ "px"
             |> Html.Attributes.style "background-position"
-         , String.fromFloat (args.spriteWidth * toFloat args.sheetColumns * scaleX)
+         , String.fromFloat (args.width * toFloat args.sheetColumns)
             ++ "px "
-            ++ String.fromFloat (args.spriteHeight * toFloat args.sheetRows * scaleY)
+            ++ String.fromFloat (args.height * toFloat args.sheetRows)
             ++ "px"
             |> Html.Attributes.style "background-size"
          , Html.Attributes.style "background-repeat" "no-repeat"
+         , pixelated
          ]
             ++ attrs
         )

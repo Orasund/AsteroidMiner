@@ -19,6 +19,8 @@ module View.Tileset exposing
 
 import Building exposing (Volume(..))
 import Direction exposing (Direction(..))
+import Html exposing (Attribute, Html)
+import Lib.Pixel
 import PixelEngine.Tile as Tile exposing (Tile, Tileset)
 
 
@@ -37,6 +39,18 @@ tileset =
         { source = "tileset.png"
         , spriteWidth = 8
         , spriteHeight = 8
+        }
+
+
+fromPosition : ( Int, Int ) -> List (Attribute msg) -> Html msg
+fromPosition pos attrs =
+    Lib.Pixel.spriteImage attrs
+        { url = "tileset.png"
+        , width = 8 * 3
+        , height = 8 * 3
+        , pos = pos
+        , sheetColumns = 17
+        , sheetRows = 17
         }
 
 
@@ -70,11 +84,12 @@ oreGround =
     Tile.fromPosition ( 1, 1 )
 
 
-comet : Tile msg
+comet : List (Attribute msg) -> Html msg
 comet =
-    Tile.fromPosition ( 4, 4 )
+    {--Tile.fromPosition ( 4, 4 )
         |> Tile.animated 4
-        |> Tile.movable "comet"
+        |> Tile.movable "comet"--}
+    ( 4, 4 ) |> fromPosition
 
 
 mine : Tile msg
